@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>利餘金鰲買</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+TC:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <!-- 引入 html2canvas 以支援專家級的報告書 PNG 匯出 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <!-- 遊戲背景裝飾 -->
+    <div class="bg-shapes">
+        <div class="stripe stripe-1"></div>
+        <div class="stripe stripe-2"></div>
+        <div class="stripe stripe-3"></div>
+    </div>
+
+    <!-- 遊戲主要容器 -->
+    <main class="game-container">
+        
+        <!-- ================= 1. 歡迎畫面 ================= -->
+        <section id="screen-welcome" class="screen active">
+            <div class="flat-card welcome-card">
+                <div class="logo-area">
+                    <div class="gold-seal-fa">
+                        <i class="fa-solid fa-scale-balanced"></i>
+                    </div>
+                    <h1 class="game-title">利餘金鰲買</h1>
+                    <p class="game-subtitle">Interactive Financial Simulation</p>
+                </div>
+                <div class="intro-text">
+                    <p>歡迎來到理財拍賣會！你將擁有一筆 <strong>NT$ 20,000</strong> 的限額資金。</p>
+                    <p>在接下來的拍賣中，你需要規劃預算、參與競標、區分「需要」與「想要」，並迎戰突如其來的財務風險挑戰！</p>
+                </div>
+                <div class="input-group text-center">
+                    <label for="player-name">請輸入小組或玩家名稱</label>
+                    <input type="text" id="player-name" placeholder="金鰲買的快樂鯉魚" autocomplete="off" maxlength="15" class="text-center">
+                </div>
+                <button id="btn-start-game" class="btn btn-primary">
+                    <i class="fa-solid fa-play"></i> 開始理財挑戰
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= 2. 預算規劃畫面 ================= -->
+        <section id="screen-budget" class="screen">
+            <div class="header-bar flat-card">
+                <div class="player-info">
+                    <!-- 新增玩家頂部小頭像，符合使用者要求 -->
+                    <div class="header-avatar-mini">
+                        <img src="" id="budget-player-avatar" alt="玩家頭像">
+                    </div>
+                    <span class="label">玩家小組:</span>
+                    <span id="budget-player-name" class="value">--</span>
+                </div>
+                <div class="money-bar">
+                    <div class="money-stat">
+                        <span class="label"><i class="fa-solid fa-coins"></i> 初始資金</span>
+                        <span class="value text-gold">NT$ 20,000</span>
+                    </div>
+                    <div class="money-stat">
+                        <span class="label"><i class="fa-solid fa-hand-holding-dollar"></i> 剩餘可分配</span>
+                        <span id="budget-remaining" class="value text-green">NT$ 20,000</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="main-layout">
+                <!-- 左側：儲蓄與預算 -->
+                <div class="sidebar-panel flat-card">
+                    <h2>第一步：填寫儲蓄與預算</h2>
+                    <p class="panel-desc">理財的首要觀念是「收入 - 儲蓄 = 支出」。請決定你要存下多少錢，再為有興趣的拍賣商品分配預算。</p>
+                    
+                    <div class="saving-input-box">
+                        <label for="saving-amount"><i class="fa-solid fa-piggy-bank"></i> 預計儲蓄金額 (NT$)</label>
+                        <div class="input-wrapper">
+                            <span class="currency-symbol">$</span>
+                            <input type="number" id="saving-amount" min="0" max="20000" step="100" placeholder="0">
+                        </div>
+                        <p class="hint">自由填寫，儲蓄能作為你之後的「緊急預備金」！</p>
+                    </div>
+
+                    <div class="budget-summary">
+                        <div class="summary-row">
+                            <span><i class="fa-solid fa-lock text-gold"></i> 預計儲蓄：</span>
+                            <span id="summary-saving" class="text-gold">NT$ 0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span><i class="fa-solid fa-cart-shopping"></i> 商品預算：</span>
+                            <span id="summary-goods">NT$ 0</span>
+                        </div>
+                        <div class="summary-row total-row">
+                            <span>已分配總額：</span>
+                            <span id="summary-total">NT$ 0 / NT$ 20,000</span>
+                        </div>
+                    </div>
+
+                    <button id="btn-submit-budget" class="btn btn-primary w-100">
+                        確認預算，進入拍賣會 <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <!-- 右側：商品清單 -->
+                <div class="content-panel flat-card scroll-panel">
+                    <h3>拍賣商品清單預估 (20項)</h3>
+                    <p class="panel-desc">請針對有興趣購買的項目填入預估預算。無意願購買的項目留空或填 0 即可。</p>
+                    
+                    <div class="goods-budget-list" id="goods-budget-list">
+                        <!-- 商品預算項目將由 JS 動態生成 -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 3. 模擬拍賣會畫面 ================= -->
+        <section id="screen-auction" class="screen">
+            <div class="header-bar flat-card">
+                <div class="player-info">
+                    <!-- 新增玩家頂部小頭像，符合使用者要求 -->
+                    <div class="header-avatar-mini" style="margin-right: 8px;">
+                        <img src="" id="auction-player-avatar" alt="玩家頭像">
+                    </div>
+                    <span id="auction-player-name" class="value" style="margin-right: 15px;">--</span>
+                    
+                    <i class="fa-solid fa-wallet text-gold"></i>
+                    <span class="label">餘額:</span>
+                    <span id="auction-wallet" class="value text-gold">NT$ 20,000</span>
+                </div>
+                <div class="auction-progress">
+                    <i class="fa-solid fa-gavel text-blue"></i>
+                    <span class="label">拍賣進度:</span>
+                    <span id="auction-item-number" class="value">1 / 20</span>
+                </div>
+                <div class="saving-info">
+                    <i class="fa-solid fa-lock text-green"></i>
+                    <span class="label">已鎖定儲蓄:</span>
+                    <span id="auction-savings" class="value text-green">NT$ 0</span>
+                </div>
+            </div>
+
+            <div class="auction-layout">
+                <!-- 左側：拍賣官與倒數 -->
+                <div class="auctioneer-panel flat-card">
+                    <div class="auctioneer-avatar">
+                        <img src="image/Seller.svg" alt="Seller" class="avatar-img" id="auctioneer-img">
+                        <div class="chat-bubble" id="auctioneer-bubble">拍賣會即將開始，請各位客官準備！</div>
+                    </div>
+
+                    <div class="gavel-stage">
+                        <div class="gavel-box" id="gavel-container">
+                            <i class="fa-solid fa-gavel gavel-icon-fa text-gold"></i>
+                        </div>
+                        <div class="bid-countdown" id="bid-countdown">3</div>
+                        <div class="bid-status-text" id="bid-status-text">準備拍賣</div>
+                    </div>
+
+                    <!-- 歷史得標區 -->
+                    <div class="won-items-preview">
+                        <h4>本組已得標商品</h4>
+                        <div class="won-items-list" id="won-items-list">
+                            <div class="empty-won">尚無得標商品</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右側：當前拍賣商品與競標面板 -->
+                <div class="auction-main flat-card">
+                    <div class="item-showcase">
+                        <div class="item-image-box" id="auction-item-img">
+                            <!-- 由 JS 動態畫入的向量 SVG 商品圖 -->
+                        </div>
+                        <div class="item-details">
+                            <div class="item-tags">
+                                <span class="tag tag-index" id="auction-item-index-tag">項目 #1</span>
+                                <span class="tag tag-budget" id="auction-item-budget-tag">我的預算: $500</span>
+                            </div>
+                            <h2 id="auction-item-name">商品名稱</h2>
+                            <p id="auction-item-desc" class="item-desc">這是商品的詳細介紹，會暗示它對未來生活或風險防禦的功用。</p>
+                        </div>
+                    </div>
+
+                    <div class="bidding-arena">
+                        <!-- NPC + 玩家自己狀態列 -->
+                        <div class="npc-bidders">
+                            <div class="npc-card" id="npc-ming">
+                                <div class="npc-avatar-container">
+                                    <img src="image/CAH01.svg" alt="小明" class="npc-avatar-img" id="npc-avatar-ming">
+                                </div>
+                                <div class="npc-info">
+                                    <span class="npc-name">小明 (衝動)</span>
+                                    <span class="npc-bid-state">觀察中</span>
+                                </div>
+                                <div class="npc-bubble" id="bubble-ming">這東西好酷！</div>
+                            </div>
+                            <div class="npc-card" id="npc-hua">
+                                <div class="npc-avatar-container">
+                                    <img src="image/CAH02.svg" alt="阿華" class="npc-avatar-img" id="npc-avatar-hua">
+                                </div>
+                                <div class="npc-info">
+                                    <span class="npc-name">阿華 (理性)</span>
+                                    <span class="npc-bid-state">觀察中</span>
+                                </div>
+                                <div class="npc-bubble" id="bubble-hua">這超出合理價值了。</div>
+                            </div>
+                            <div class="npc-card" id="npc-mei">
+                                <div class="npc-avatar-container">
+                                    <img src="image/CAH03.svg" alt="美美" class="npc-avatar-img" id="npc-avatar-mei">
+                                </div>
+                                <div class="npc-info">
+                                    <span class="npc-name">美美 (跟風)</span>
+                                    <span class="npc-bid-state">觀察中</span>
+                                </div>
+                                <div class="npc-bubble" id="bubble-mei">大家搶我就搶！</div>
+                            </div>
+                            <!-- 顯示玩家自己的卡片，符合使用者需求 -->
+                            <div class="npc-card" id="npc-player">
+                                <div class="npc-avatar-container">
+                                    <img src="image/CAH04.svg" alt="我" class="npc-avatar-img" id="npc-avatar-player">
+                                </div>
+                                <div class="npc-info">
+                                    <span class="npc-name" id="npc-name-player">本組 (玩家)</span>
+                                    <span class="npc-bid-state">觀察中</span>
+                                </div>
+                                <div class="npc-bubble" id="bubble-player">我出價囉！</div>
+                            </div>
+                        </div>
+
+                        <!-- 競標出價面板 -->
+                        <div class="bid-panel">
+                            <div class="current-price-row">
+                                <div class="price-block">
+                                    <span class="label">拍賣底價</span>
+                                    <span id="auction-start-price" class="value">NT$ 200</span>
+                                </div>
+                                <div class="price-block highlight">
+                                    <span class="label"><i class="fa-solid fa-fire text-gold"></i> 當前最高出價</span>
+                                    <span id="auction-current-price" class="value text-gold">NT$ --</span>
+                                </div>
+                                <div class="price-block">
+                                    <span class="label">目前出價領先者</span>
+                                    <span id="auction-current-leader" class="value text-blue">無</span>
+                                </div>
+                            </div>
+
+                            <div class="bid-actions" id="bid-actions-container">
+                                <div class="bid-quick-buttons">
+                                    <button class="btn btn-secondary btn-bid" data-add="100"><i class="fa-solid fa-plus"></i> 100</button>
+                                    <button class="btn btn-secondary btn-bid" data-add="500"><i class="fa-solid fa-plus"></i> 500</button>
+                                    <button class="btn btn-secondary btn-bid" data-add="1000"><i class="fa-solid fa-plus"></i> 1,000</button>
+                                </div>
+                                <div class="bid-custom-input">
+                                    <input type="number" id="custom-bid-amount" placeholder="自訂出價金額" step="100">
+                                    <button id="btn-custom-bid" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> 出價</button>
+                                </div>
+                                <div class="bid-control-buttons split-buttons">
+                                    <!-- 加入快速跳過所有競標的按鈕 -->
+                                    <button id="btn-skip-all-auctions" class="btn btn-secondary">
+                                        <i class="fa-solid fa-forward-step"></i> 跳過所有競標
+                                    </button>
+                                    <button id="btn-pass-bid" class="btn btn-danger">
+                                        <i class="fa-solid fa-hand"></i> 放棄此商品
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 4. 商品分類與結算畫面 ================= -->
+        <section id="screen-classify" class="screen">
+            <div class="header-bar flat-card">
+                <div class="player-info">
+                    <!-- 新增玩家頂部小頭像，符合使用者要求 -->
+                    <div class="header-avatar-mini" style="margin-right: 8px;">
+                        <img src="" id="classify-player-avatar" alt="玩家頭像">
+                    </div>
+                    <span id="classify-player-name" class="value" style="margin-right: 15px;">--</span>
+                    
+                    <i class="fa-solid fa-magnifying-glass-chart text-gold"></i>
+                    <h2>第二步：釐清「 need 需要」與「 want 想要」</h2>
+                </div>
+                <p class="bar-desc">恭喜你完成了拍賣！現在，請點選分類你所標得的商品。</p>
+            </div>
+
+            <div class="classify-container">
+                <!-- 左側：待分類商品清單 -->
+                <div class="classify-main flat-card">
+                    <div class="classify-cards-grid" id="classify-cards-grid">
+                        <!-- 得標商品待分類卡片 -->
+                    </div>
+                    <div class="no-items-to-classify" id="no-items-to-classify" style="display: none;">
+                        <p><i class="fa-solid fa-face-smile-wink fa-2x text-gold"></i></p>
+                        <p>你在拍賣會中沒有標得任何商品。這意味著你的 20,000 元全部轉為儲蓄！</p>
+                        <p>你可以直接點擊下方按鈕，進入下一階段的生存挑戰。</p>
+                    </div>
+                </div>
+
+                <!-- 右側：理財官教育面板 -->
+                <div class="classify-sidebar flat-card">
+                    <div class="edu-box">
+                        <h3>理財觀念指引</h3>
+                        <div class="edu-card need">
+                            <span class="edu-icon"><i class="fa-solid fa-circle-check"></i> 需要 (Need)</span>
+                            <p>為維持生命的基本必需品，例如空氣、水、食物，或是生活中不可缺少的必需物資。</p>
+                        </div>
+                        <div class="edu-card want">
+                            <span class="edu-icon"><i class="fa-solid fa-circle-question"></i> 想要 (Want)</span>
+                            <p>生活中可有可無，純粹因個人慾望而想擁有的商品。</p>
+                        </div>
+                    </div>
+
+                    <div class="classify-stats">
+                        <div class="stat-row">
+                            <span>已分類：</span>
+                            <span id="classify-progress-text">0 / 0</span>
+                        </div>
+                        <div class="stat-row">
+                            <span>理財思辨度：</span>
+                            <span id="classify-accuracy-text">--%</span>
+                        </div>
+                    </div>
+
+                    <button id="btn-finish-classify" class="btn btn-primary w-100" disabled>
+                        確認分類，進入利餘之戰 <i class="fa-solid fa-shield"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 5. 利餘之戰生存挑戰畫面 ================= -->
+        <section id="screen-survival" class="screen">
+            <div class="header-bar flat-card">
+                <div class="survival-status-grid">
+                    <div class="status-item">
+                        <span class="label">
+                            <!-- 新增玩家頂部小頭像，符合使用者要求 -->
+                            <div class="header-avatar-mini" style="display:inline-block; vertical-align:middle; margin-right:5px;">
+                                <img src="" id="survival-player-avatar" alt="玩家頭像">
+                            </div>
+                            玩家小組
+                        </span>
+                        <span id="survival-player-name" class="value">--</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="label"><i class="fa-solid fa-sack-dollar text-gold"></i> 可用總資產 (含儲蓄)</span>
+                        <span id="survival-wallet" class="value text-gold">NT$ 20,000</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="label"><i class="fa-solid fa-hourglass-half"></i> 挑戰進度</span>
+                        <span id="survival-round" class="value">回合 1 / 6</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="label"><i class="fa-solid fa-shield-heart text-success"></i> 已得標裝備</span>
+                        <div class="shield-badges" id="survival-badges">
+                            <!-- 顯示玩家擁有的防護圖標 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="survival-layout">
+                <!-- 左側：6張事件抽卡 -->
+                <div class="cards-stage flat-card">
+                    <h3>利餘之戰 - 抽抽樂點</h3>
+                    <p class="panel-desc">請任意點擊下方的一張數字卡牌，每張卡牌背後都有不同的生活財務事件，看看你的資產與買到的商品如何應對風險！</p>
+                    
+                    <div class="survival-cards-grid" id="survival-cards-grid">
+                        <!-- 6張卡牌由 JS 生成 -->
+                    </div>
+                </div>
+
+                <!-- 右側：事件回報與生命值/資金流記錄 -->
+                <div class="event-reporter flat-card">
+                    <h3><i class="fa-solid fa-list-check"></i> 事件日誌</h3>
+                    <div class="event-log-container" id="event-log-container">
+                        <div class="event-placeholder-text">等待抽卡觸發事件...</div>
+                    </div>
+
+                    <div class="net-worth-tracker">
+                        <h4>財務健康值條</h4>
+                        <div class="health-bar-container">
+                            <div class="health-bar" id="financial-health-bar" style="width: 100%"></div>
+                            <span class="health-val" id="health-bar-value">NT$ 20,000</span>
+                        </div>
+                        <p class="bar-desc">注意：若可用總資產歸零，將會宣告財務破產！</p>
+                    </div>
+
+                    <button id="btn-next-round" class="btn btn-primary w-100" style="display: none;">
+                        下一回合 <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                    <button id="btn-show-results" class="btn btn-glow btn-primary w-100" style="display: none;">
+                        查看財務診斷報告 <i class="fa-solid fa-square-poll-vertical"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 6. 理財診斷與反思畫面 ================= -->
+        <section id="screen-result" class="screen">
+            <div class="result-layout">
+                <!-- 左側：財務診斷報告書 (支援 PNG 匯出) -->
+                <div class="report-panel flat-card" id="report-capture-area">
+                    <!-- 診斷書頂部的玩家名字與頭像展示欄，符合專家要求 -->
+                    <div class="result-player-header">
+                        <div class="result-player-avatar-container">
+                            <img src="image/CAH04.svg" id="result-player-avatar" alt="玩家頭像" class="result-player-avatar-img">
+                        </div>
+                        <div class="result-player-name-info">
+                            <span class="result-player-label">PLAYER 小組名稱</span>
+                            <h3 id="result-player-name" class="result-player-title">金鰲買的快樂鯉魚</h3>
+                        </div>
+                    </div>
+
+                    <div class="badge-title-row">
+                        <div class="ribbon-badge"><i class="fa-solid fa-medal"></i> 理財診斷</div>
+                        <h2>理財性格診斷報告書</h2>
+                    </div>
+
+                    <div class="diagnose-section">
+                        <div class="character-result-box">
+                            <span class="char-label">您的理財性格：</span>
+                            <h1 id="character-title" class="text-gold">精打細算金利餘</h1>
+                            <p id="character-desc" class="char-desc">診斷內容</p>
+                        </div>
+
+                        <div class="report-stats-grid">
+                            <div class="r-stat">
+                                <span class="lbl"><i class="fa-solid fa-piggy-bank"></i> 初始資金</span>
+                                <span class="val">NT$ 20,000</span>
+                            </div>
+                            <div class="r-stat">
+                                <span class="lbl"><i class="fa-solid fa-cart-arrow-down text-red"></i> 拍賣花費</span>
+                                <span id="r-spend" class="val text-red">NT$ --</span>
+                            </div>
+                            <div class="r-stat">
+                                <span class="lbl"><i class="fa-solid fa-lock text-green"></i> 預計儲蓄</span>
+                                <span id="r-planned-saving" class="val text-green">NT$ --</span>
+                            </div>
+                            <div class="r-stat">
+                                <span class="lbl"><i class="fa-solid fa-shuffle"></i> 生存挑戰淨損益</span>
+                                <span id="r-survival-delta" class="val">NT$ --</span>
+                            </div>
+                            <div class="r-stat highlight">
+                                <span class="lbl"><i class="fa-solid fa-chart-line text-gold"></i> 最終可用總資產</span>
+                                <span id="r-final-balance" class="val text-gold">NT$ --</span>
+                            </div>
+                            <div class="r-stat highlight">
+                                <span class="lbl"><i class="fa-solid fa-clipboard-check text-blue"></i> 理財思辨度</span>
+                                <span id="r-classify-acc" class="val text-blue">--%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 預估預算 vs 實際支出 對比表 -->
+                    <div class="chart-section">
+                        <h3>預算規劃偏差值分析</h3>
+                        <p class="panel-desc">偏差值（預估花費 - 實際花費）：偏差值愈小，代表你的財務控制與規劃能力愈精準！</p>
+                        <div class="deviation-table-wrapper">
+                            <table class="deviation-table">
+                                <thead>
+                                    <tr>
+                                        <th>商品名稱</th>
+                                        <th>規劃預算</th>
+                                        <th>實際得標價</th>
+                                        <th>偏差值</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="deviation-table-body">
+                                    <!-- JS 動態生成 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右側：反思討論與重新開始 -->
+                <div class="reflection-panel flat-card">
+                    <h3>利餘金五關 - 問題反思</h3>
+                    <p class="panel-desc">請與你的組員或自己思考以下問題，這能幫助你釐清真正的理財價值觀：</p>
+                    
+                    <div class="reflection-questions">
+                        <div class="q-item">
+                            <span class="q-num">1</span>
+                            <p>如果想買的商品超過預算，小組會加碼搶購嗎？（盲目性衝動與預算控制）</p>
+                        </div>
+                        <div class="q-item">
+                            <span class="q-num">2</span>
+                            <p>所買到的商品項目，是否有非當初所規劃的？是在何種情況下去競標該商品？（衝動購物冷卻觀念）</p>
+                        </div>
+                        <div class="q-item">
+                            <span class="q-num">3</span>
+                            <p>小組有規劃儲蓄的部分嗎？是為了什麼目的？（緊急預備金與開源節流）</p>
+                        </div>
+                        <div class="q-item">
+                            <span class="q-num">4</span>
+                            <p>小組願意把自己部分的金錢拿去幫助需要的人或團體嗎？為什麼？（慈善公益與社會責任）</p>
+                        </div>
+                    </div>
+
+                    <div class="reflection-actions">
+                        <!-- 支援匯出報告為 PNG 的按鈕 -->
+                        <button id="btn-export-png" class="btn btn-primary w-100" style="margin-bottom:12px;">
+                            <i class="fa-solid fa-file-image"></i> 匯出診斷報告書 PNG
+                        </button>
+                        <button id="btn-restart" class="btn btn-secondary w-100">
+                            <i class="fa-solid fa-rotate-left"></i> 重新開始挑戰
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 網頁底層 Footer -->
+    <footer class="game-footer">
+        <div class="fb-link-area">
+            <a href="https://www.facebook.com/happyliyuchilltiger/" target="_blank" class="fb-link">
+                <i class="fa-brands fa-facebook fb-icon animate-pulse-fb"></i> 快樂鯉魚秋老虎
+            </a>
+        </div>
+        <div class="copyright-text">
+            Copyright © Liyuchiutiger Gongminshen
+        </div>
+    </footer>
+
+    <!-- 可拖曳吉祥物 (LiyuChillGuy) -->
+    <div id="draggable-mascot" class="mascot-container">
+        <img src="image/LiyuChillGuy.svg" alt="LiyuChillGuy" draggable="false">
+    </div>
+
+    <!-- 提示彈窗 -->
+    <div class="toast" id="toast-message">提示訊息</div>
+
+    <script src="game.js"></script>
+</body>
+</html>
