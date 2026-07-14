@@ -1693,3 +1693,25 @@ h1, h2, h3, h4 {
         grid-template-columns: 1fr;
     }
 }
+
+/* --- 新增：小型按鈕樣式 --- */
+.btn-sm {
+    padding: 6px 14px;
+    font-size: 14px;
+    border-radius: 8px;
+    box-shadow: var(--flat-shadow-xs);
+    border-width: 2px;
+}
+.btn-sm:hover {
+    box-shadow: var(--flat-shadow-sm);
+    transform: translate(-2px, -2px);
+}
+.btn-sm:active {
+    box-shadow: none;
+    transform: translate(1px, 1px);
+}
+
+/* --- 新增：拍賣頁面頂部看板按鈕容器 --- */
+.header-catalog-btn {
+    margin-left: auto;
+}

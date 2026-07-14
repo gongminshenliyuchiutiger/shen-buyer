@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>利餘金鰲買 - 大螢幕投影商品看板 (20項)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1e293b;
+            --border-dark: #1e293b;
+            --border-width: 3px;
+            --warning: #ef4444; /* 已售紅色 */
+            --gold: #f59e0b; /* 標題金色 */
+            --flat-shadow: 6px 6px 0px #1e293b;
+            --flat-shadow-sm: 4px 4px 0px #1e293b;
+            --flat-shadow-xs: 2px 2px 0px #1e293b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', 'Noto Sans TC', sans-serif;
+            background-color: #e2e8f0;
+            color: var(--primary);
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 頂部投影大標題列 (高度還原圖片風格，帶點現代精緻質感) */
+        .catalog-header {
+            background-color: #000000;
+            width: 100%;
+            height: 105px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: var(--border-width) solid var(--border-dark);
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        /* 裝飾炫帶 */
+        .rainbow-ribbon {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 320px;
+            height: 105px;
+            pointer-events: none;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.9) 0%, rgba(245, 158, 11, 0.9) 30%, rgba(34, 197, 94, 0.9) 60%, rgba(59, 130, 246, 0.9) 100%);
+            clip-path: polygon(30% 0, 100% 0, 100% 100%, 0% 100%);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 25px;
+        }
+
+        .gold-brand-text {
+            color: white;
+            font-weight: 900;
+            font-size: 26px;
+            font-style: italic;
+            text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
+            transform: rotate(-5deg);
+        }
+
+        .catalog-title {
+            color: #fbbf24; /* 金黃色 */
+            font-size: 42px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-shadow: 3px 3px 0px #1e293b, 5px 5px 15px rgba(251, 191, 36, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 10;
+        }
+
+        /* 已售標誌說明 */
+        .sold-info-tag {
+            position: absolute;
+            bottom: 12px;
+            right: 280px;
+            background-color: var(--warning);
+            color: white;
+            border: 2px solid white;
+            padding: 2px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 900;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+
+        /* 吉祥物左下角裝飾 */
+        .mascot-bg-decor {
+            position: absolute;
+            left: 20px;
+            bottom: -20px;
+            width: 140px;
+            opacity: 0.12;
+            pointer-events: none;
+            transform: scaleX(-1);
+        }
+
+        /* 控制工具列 */
+        .toolbar {
+            padding: 12px 30px;
+            background-color: #cbd5e1;
+            border-bottom: var(--border-width) solid var(--border-dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-badge {
+            background-color: white;
+            border: 2px solid var(--border-dark);
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--flat-shadow-xs);
+        }
+
+        .pulse-dot {
+            width: 10px;
+            height: 10px;
+            background-color: #22c55e;
+            border-radius: 50%;
+            animation: pulseGreen 1.5s infinite;
+        }
+
+        @keyframes pulseGreen {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+
+        .btn-reset {
+            background: white;
+            color: var(--primary);
+            border: var(--border-width) solid var(--border-dark);
+            padding: 8px 18px;
+            font-size: 14px;
+            font-weight: 900;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: var(--flat-shadow-xs);
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-reset:hover {
+            background: #f8fafc;
+            transform: translate(-1px, -1px);
+            box-shadow: var(--flat-shadow-sm);
+        }
+
+        .btn-reset:active {
+            transform: translate(1px, 1px);
+            box-shadow: none;
+        }
+
+        /* 4x5 商品卡片大網格 */
+        .catalog-grid {
+            flex-grow: 1;
+            padding: 25px 30px;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            gap: 18px;
+            max-width: 1600px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* 商品大卡片 */
+        .catalog-card {
+            background-color: #ffffff;
+            border: var(--border-width) solid var(--border-dark);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            cursor: pointer;
+            user-select: none;
+            box-shadow: var(--flat-shadow);
+            transition: transform 0.15s, box-shadow 0.15s;
+            overflow: hidden;
+        }
+
+        .catalog-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 8px 8px 0px var(--border-dark);
+        }
+
+        .catalog-card:active {
+            transform: translate(2px, 2px);
+            box-shadow: var(--flat-shadow-xs);
+        }
+
+        /* 商品編號與標籤 */
+        .card-number {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background-color: var(--primary-light);
+            border: 2px solid var(--border-dark);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 900;
+        }
+
+        .card-price-tag {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            font-size: 10px;
+            font-weight: 800;
+            color: #64748b;
+            background-color: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        /* 卡片向量圖標 */
+        .card-vector-box {
+            width: 76px;
+            height: 76px;
+            border: 2px solid var(--border-dark);
+            border-radius: 8px;
+            background-color: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+            margin-bottom: 8px;
+            box-shadow: var(--flat-shadow-xs);
+        }
+
+        .card-vector-box svg {
+            width: 90%;
+            height: 90%;
+        }
+
+        /* 商品名稱 */
+        .card-name {
+            font-size: 15px;
+            font-weight: 900;
+            color: var(--primary);
+            text-align: center;
+            line-height: 1.35;
+            margin-bottom: 2px;
+            width: 100%;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            height: 40px;
+        }
+
+        /* 底部底價 */
+        .card-bottom-price {
+            font-size: 11px;
+            font-weight: 800;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        /* 紅色已售蓋章印章 (極致擬真傾斜設計) */
+        .stamp-sold {
+            position: absolute;
+            width: 130px;
+            height: 65px;
+            border: 4px double var(--warning);
+            border-radius: 8px;
+            color: var(--warning);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            transform: rotate(-12deg) scale(2);
+            opacity: 0;
+            pointer-events: none;
+            background-color: rgba(255, 255, 255, 0.9);
+            z-index: 100;
+            top: 50%;
+            left: 50%;
+            margin-top: -32.5px;
+            margin-left: -65px;
+            box-shadow: 0 0 5px rgba(239, 68, 68, 0.3);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .stamp-sold-title {
+            font-size: 18px;
+            letter-spacing: 2px;
+            line-height: 1.1;
+        }
+
+        .stamp-sold-sub {
+            font-size: 9px;
+            font-family: var(--font-outfit);
+            letter-spacing: 1px;
+            line-height: 1.1;
+        }
+
+        /* 已售狀態下的卡片與印章樣式 */
+        .catalog-card.sold {
+            background-color: #fef2f2;
+            border-color: var(--warning);
+        }
+
+        .catalog-card.sold:hover {
+            transform: none;
+            box-shadow: var(--flat-shadow);
+        }
+
+        .catalog-card.sold .stamp-sold {
+            opacity: 1;
+            transform: rotate(-12deg) scale(1);
+        }
+
+        .catalog-card.sold .card-vector-box {
+            filter: grayscale(80%) opacity(60%);
+        }
+
+        .catalog-card.sold .card-name {
+            color: #94a3b8;
+        }
+
+        /* 標註成交資訊 */
+        .sold-winner-badge {
+            position: absolute;
+            bottom: 4px;
+            background-color: rgba(30, 41, 59, 0.95);
+            color: #fbbf24;
+            font-size: 9.5px;
+            font-weight: 800;
+            padding: 1px 6px;
+            border-radius: 4px;
+            border: 1px solid var(--border-dark);
+            z-index: 110;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.25s ease;
+        }
+
+        .catalog-card.sold .sold-winner-badge {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 音效與底部 */
+        .bottom-credits {
+            text-align: center;
+            padding: 8px;
+            font-size: 11px;
+            color: #94a3b8;
+            font-weight: 700;
+            background-color: #f8fafc;
+            border-top: 1.5px solid #cbd5e1;
+        }
+
+        /* --- 新增：吉祥物拖曳與特效樣式 --- */
+        .mascot-draggable-container {
+            position: fixed;
+            left: 20px;
+            bottom: 20px;
+            width: 130px;
+            height: auto;
+            z-index: 10000;
+            cursor: move;
+            user-select: none;
+            touch-action: none;
+        }
+
+        .mascot-hover-wrapper {
+            width: 100%;
+            height: auto;
+            transition: filter 0.3s ease, transform 0.3s ease;
+        }
+
+        .mascot-img {
+            width: 100%;
+            height: auto;
+            display: block;
+            pointer-events: none; /* 防止圖片拖曳時瀏覽器預設開啟圖片 */
+        }
+
+        /* 懸停時彩色霓虹發光與抖動 */
+        .mascot-hover-wrapper:hover {
+            animation: mascot-shake 0.15s infinite linear, mascot-neon-glow 1.5s infinite linear;
+        }
+
+        @keyframes mascot-shake {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            20% { transform: translate(-2px, 1px) rotate(-1.5deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            60% { transform: translate(-1px, 2px) rotate(-0.5deg); }
+            80% { transform: translate(2px, 1px) rotate(1.5deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+
+        @keyframes mascot-neon-glow {
+            0% {
+                filter: drop-shadow(0 0 6px #ff007f) drop-shadow(0 0 15px #ff00ff);
+            }
+            20% {
+                filter: drop-shadow(0 0 6px #00f0ff) drop-shadow(0 0 15px #00f0ff);
+            }
+            40% {
+                filter: drop-shadow(0 0 6px #39ff14) drop-shadow(0 0 15px #39ff14);
+            }
+            60% {
+                filter: drop-shadow(0 0 6px #ffff00) drop-shadow(0 0 15px #ffff00);
+            }
+            80% {
+                filter: drop-shadow(0 0 6px #ff007f) drop-shadow(0 0 15px #ff007f);
+            }
+            100% {
+                filter: drop-shadow(0 0 6px #ff00ff) drop-shadow(0 0 15px #ff00ff);
+            }
+        }
+
+        /* --- 新增：FB 粉絲專頁按鈕樣式 --- */
+        .fb-link-container {
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .fb-fanpage-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #1877f2;
+            font-weight: 800;
+            font-size: 14px;
+            padding: 6px 14px;
+            background-color: #ffffff;
+            border: 2px solid #1877f2;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px rgba(24, 119, 242, 0.1);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .fb-fanpage-link:hover {
+            background-color: #1877f2;
+            color: #ffffff;
+            box-shadow: 0 6px 12px rgba(24, 119, 242, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .fb-icon {
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 吉祥物拖曳容器 -->
+    <div id="mascot-draggable" class="mascot-draggable-container">
+        <div class="mascot-hover-wrapper">
+            <img src="image/LiyuChillGuy.svg" alt="吉祥物" class="mascot-img">
+        </div>
+    </div>
+
+    <!-- 頂部黑底投影橫幅 -->
+    <header class="catalog-header">
+        <img src="image/Seller.svg" alt="Seller" class="mascot-bg-decor">
+        <h1 class="catalog-title">
+            <i class="fa-solid fa-gavel text-gold"></i> 利餘金鰲買 商品清單(20項)
+        </h1>
+        <div class="sold-info-tag">ⓘ 已售</div>
+        <div class="rainbow-ribbon">
+            <span class="gold-brand-text">金利餘</span>
+        </div>
+    </header>
+
+    <!-- 工具列 -->
+    <div class="toolbar">
+        <div class="status-badge">
+            <span class="pulse-dot"></span>
+            <span>已啟用 LocalStorage 實時同步模式 (大螢幕專用)</span>
+        </div>
+        <button class="btn-reset" onclick="resetAllStatuses()"><i class="fa-solid fa-rotate-left"></i> 重設所有商品狀態</button>
+    </div>
+
+    <!-- 20項商品 4x5 網格 -->
+    <main class="catalog-grid" id="catalog-grid">
+        <!-- JS 動態生成 20 個商品方塊 -->
+    </main>
+
+    <!-- 頁尾宣告 -->
+    <footer class="bottom-credits">
+        <div class="fb-link-container">
+            <a href="https://www.facebook.com/happyliyuchilltiger/" target="_blank" class="fb-fanpage-link">
+                <i class="fa-brands fa-facebook fb-icon"></i>
+                <span class="fb-text">快樂鯉魚秋老虎</span>
+            </a>
+        </div>
+        Copyright © Liyuchiutiger Gongminshen
+    </footer>
+
+    <!-- JS 腳本 -->
+    <script>
+        // 與 game.js 完美同步的 20 項商品定義
+        const ITEMS = [
+            { id: 1, name: "降噪 AirPods Pro 耳機", basePrice: 500, svg: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#3b82f6" stroke="#1e293b" stroke-width="4"/><rect x="34" y="32" width="13" height="24" rx="6" fill="#ffffff" stroke="#1e293b" stroke-width="3"/><path d="M 40 56 L 40 72" stroke="#1e293b" stroke-width="3"/><rect x="53" y="32" width="13" height="24" rx="6" fill="#ffffff" stroke="#1e293b" stroke-width="3"/><path d="M 59 56 L 59 72" stroke="#1e293b" stroke-width="3"/></svg>` },
+            { id: 2, name: "網紅厚奶茶 100 杯", basePrice: 200, svg: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#f59e0b" stroke="#1e293b" stroke-width="4"/><path d="M 36 38 L 40 76 A 4 4 0 0 0 44 80 L 56 80 A 4 4 0 0 0 60 76 L 64 38 Z" fill="#ffedd5" stroke="#1e293b" stroke-width="3"/><rect x="33" y="32" width="34" height="6" fill="#ef4444" stroke="#1e293b" stroke-width="3" rx="2"/><path d="M 50 32 L 56 16" stroke="#1e293b" stroke-width="4"/></svg>` },
+            { id: 3, name: "人氣樂團演唱會門票", basePrice: 1000, svg: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#ec4899" stroke="#1e293b" stroke-width="4"/><g transform="rotate(-15 50 50)"><rect x="24" y="36" width="52" height="28" rx="4" fill="#ffffff" stroke="#1e293b" stroke-width="3"/><circle cx="34" cy="50" r="4" fill="#ec4899" stroke="#1e293b" stroke-width="1.5"/><line x1="46" y1="44" x2="68" y2="44" stroke="#1e293b" stroke-width="2.5"/><line x1="46" y1="52" x2="68" y2="52" stroke="#1e293b" stroke-width="2.5"/></g></svg>` },
+            { id: 4, name: "GORE-TEX 機能外套", basePrice: 1000, svg: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#10b981" stroke="#1e293b" stroke-width="4"/><path d="M 32 42 L 40 36 L 50 46 L 60 36 L 68 42 L 68 76 L 32 76 Z" fill="#059669" stroke="#1e293b" stroke-width="3"/><path d="M 50 46 L 50 76" stroke="#fbbf24" stroke-width="3.5"/></svg>` },
+            { id: 5, name: "捷安特公路碳纖維單車", basePrice: 1000, svg: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#06b6d4" stroke="#1e293b" stroke-width="4"/><circle cx="34" cy="62" r="12" fill="none" stroke="#1e293b" stroke-width="3"/><circle cx="66" cy="62" r="12" fill="none" stroke="#1e293b" stroke-width="3"/><path d="M 34 62 L 48 44 L 62 44 L 66 62 M 48 44 L 54 62 M 44 38 L 52 38" fill="none" stroke="#1e293b" stroke-width="3"/></svg>` },
+            { id: 6, name: "全球植樹與減碳計畫", basePrice: 200, svg: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#84cc16" stroke="#1e293b" stroke-width="4"/><path d="M 50 75 L 50 45" stroke="#78350f" stroke-width="4"/><path d="M 50 45 C 38 45 32 30 50 22 C 68 30 62 45 50 45 Z" fill="#22c55e" stroke="#1e293b" stroke-width="3"/></svg>` },
+            { id: 7, name: "任天堂 Switch 2 同捆組", basePrice: 500, svg: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#a855f7" stroke="#1e293b" stroke-width="4"/><rect x="28" y="38" width="44" height="24" rx="4" fill="#ffffff" stroke="#1e293b" stroke-width="3"/><rect x="28" y="38" width="10" height="24" rx="2" fill="#ef4444" stroke="#1e293b" stroke-width="2"/><rect x="62" y="38" width="10" height="24" rx="2" fill="#3b82f6" stroke="#1e293b" stroke-width="2"/><circle cx="33" cy="50" r="2" fill="#1e293b"/><circle cx="67" cy="50" r="2" fill="#1e293b"/></svg>` },
+            { id: 8, name: "健檢與重大傷病平安險", basePrice: 500, svg: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#14b8a6" stroke="#1e293b" stroke-width="4"/><path d="M 50 28 L 68 36 L 68 55 C 68 68, 50 75, 50 75 C 50 75, 32 68, 32 55 L 32 36 Z" fill="#ffffff" stroke="#1e293b" stroke-width="3"/><path d="M 44 52 L 49 57 L 58 46" fill="none" stroke="#14b8a6" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>` },
+            { id: 9, name: "精美特製家人生日禮包", basePrice: 300, svg: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#f43f5e" stroke="#1e293b" stroke-width="4"/><rect x="32" y="44" width="36" height="32" rx="2" fill="#ffffff" stroke="#1e293b" stroke-width="3"/><path d="M 50 44 L 50 76 M 32 60 L 68 60" stroke="#f43f5e" stroke-width="3"/><path d="M 50 44 C 42 36, 42 26, 50 44 C 58 26, 58 36, 50 44 Z" fill="#f43f5e" stroke="#1e293b" stroke-width="2.5"/></svg>` },
+            { id: 10, name: "RTX 5080 頂級顯示卡", basePrice: 2000, svg: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#475569" stroke="#1e293b" stroke-width="4"/><rect x="26" y="34" width="48" height="32" rx="3" fill="#22c55e" stroke="#1e293b" stroke-width="3"/><circle cx="42" cy="50" r="10" fill="#334155" stroke="#1e293b" stroke-width="3"/><circle cx="58" cy="50" r="10" fill="#334155" stroke="#1e293b" stroke-width="3"/></svg>` },
+            { id: 11, name: "東京奢華雙人自由行", basePrice: 3000, svg: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#60a5fa" stroke="#1e293b" stroke-width="4"/><path d="M 24 55 Q 50 25 76 55 Z" fill="#ffffff" stroke="#1e293b" stroke-width="3"/><path d="M 18 55 L 82 55 Q 82 60 76 60 L 24 60 Q 18 60 18 55 Z" fill="#ef4444" stroke="#1e293b" stroke-width="3"/><path d="M 50 35 L 50 55" stroke="#1e293b" stroke-width="3"/></svg>` },
+            { id: 12, name: "iPad Pro M4 + Pencil", basePrice: 2000, svg: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#3b82f6" stroke="#1e293b" stroke-width="4"/><rect x="28" y="30" width="44" height="40" rx="3" fill="#ffffff" stroke="#1e293b" stroke-width="3"/><rect x="32" y="34" width="36" height="32" fill="#1e293b"/><line x1="72" y1="26" x2="82" y2="46" stroke="#1e293b" stroke-width="3"/></svg>` },
+            { id: 13, name: "Tesla M3 自駕體驗券", basePrice: 500, svg: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#6366f1" stroke="#1e293b" stroke-width="4"/><path d="M 28 64 Q 50 32 72 64 Z" fill="#ef4444" stroke="#1e293b" stroke-width="3"/><rect x="30" y="58" width="40" height="10" fill="#ffffff" stroke="#1e293b" stroke-width="3" rx="2"/><circle cx="38" cy="68" r="6" fill="#1e293b"/><circle cx="62" cy="68" r="6" fill="#1e293b"/></svg>` },
+            { id: 14, name: "日常超柔抽取式衛生紙", basePrice: 200, svg: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#94a3b8" stroke="#1e293b" stroke-width="4"/><rect x="30" y="38" width="40" height="34" rx="3" fill="#ffffff" stroke="#1e293b" stroke-width="3"/><ellipse cx="50" cy="38" rx="20" ry="6" fill="#e2e8f0" stroke="#1e293b" stroke-width="2"/></svg>` },
+            { id: 15, name: "生成式 AI 與程式課程", basePrice: 1000, svg: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#0284c7" stroke="#1e293b" stroke-width="4"/><rect x="28" y="32" width="44" height="30" rx="3" fill="#ffffff" stroke="#1e293b" stroke-width="3"/><path d="M 40 62 L 32 74 L 68 74 L 60 62 Z" fill="#64748b" stroke="#1e293b" stroke-width="3"/><path d="M 42 42 L 48 48 L 58 38" fill="none" stroke="#22c55e" stroke-width="3.5" stroke-linecap="round"/></svg>` },
+            { id: 16, name: "智慧手環與心率手錶", basePrice: 500, svg: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#10b981" stroke="#1e293b" stroke-width="4"/><circle cx="50" cy="50" r="20" fill="none" stroke="#ffffff" stroke-width="5"/><rect x="42" y="32" width="16" height="36" rx="4" fill="#ffffff" stroke="#1e293b" stroke-width="3"/><rect x="45" y="42" width="10" height="16" fill="#1e293b"/></svg>` },
+            { id: 17, name: "流浪動物之家飼料捐贈", basePrice: 200, svg: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#fb7185" stroke="#1e293b" stroke-width="4"/><path d="M 38 46 C 30 38, 42 28, 50 38 C 58 28, 70 38, 62 46 L 50 58 Z" fill="#ffffff" stroke="#1e293b" stroke-width="3"/><path d="M 50 64 L 50 74" stroke="#1e293b" stroke-width="3.5"/></svg>` },
+            { id: 18, name: "煙霧探測與滅火器組", basePrice: 300, svg: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#ef4444" stroke="#1e293b" stroke-width="4"/><rect x="42" y="38" width="16" height="36" rx="2" fill="#ffffff" stroke="#1e293b" stroke-width="3"/><rect x="40" y="32" width="20" height="6" fill="#ef4444" stroke="#1e293b" stroke-width="2"/><path d="M 58 42 Q 68 46 64 58" fill="none" stroke="#1e293b" stroke-width="3"/></svg>` },
+            { id: 19, name: "頂級和牛燒肉雙人套餐", basePrice: 500, svg: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#b45309" stroke="#1e293b" stroke-width="4"/><path d="M 32 45 C 32 35, 68 35, 68 45 C 68 62, 32 62, 32 45 Z" fill="#ffffff" stroke="#1e293b" stroke-width="3"/><path d="M 40 45 Q 50 38 60 45 M 36 50 Q 50 46 64 50" fill="none" stroke="#ef4444" stroke-width="3"/></svg>` },
+            { id: 20, name: "星巴克咖啡豆手沖精品壺", basePrice: 300, svg: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#15803d" stroke="#1e293b" stroke-width="4"/><path d="M 34 46 L 62 46 L 58 74 L 38 74 Z" fill="#ffffff" stroke="#1e293b" stroke-width="3"/><path d="M 62 52 L 68 52 C 72 52, 72 62, 68 62 L 56 62" fill="none" stroke="#1e293b" stroke-width="3"/><path d="M 30 36 L 66 36 L 50 46 Z" fill="#1e293b"/></svg>` }
+        ];
+
+        // 追蹤本頁面手動設定的「已售」狀態 (在不與 LocalStorage 連動時)
+        const manualSoldState = {};
+
+        // Web Audio API 蓋章音效合成器
+        const AudioStamp = {
+            ctx: null,
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            },
+            play() {
+                try {
+                    this.init();
+                    const ctx = this.ctx;
+                    
+                    // 1. 低頻木槌撞擊聲
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    
+                    osc.frequency.setValueAtTime(160, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.15);
+                    
+                    gain.gain.setValueAtTime(0.6, ctx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+                    
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.16);
+
+                    // 2. 高頻摩擦「沙」聲 (白噪音)
+                    const bufferSize = ctx.sampleRate * 0.08;
+                    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                    const data = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        data[i] = Math.random() * 2 - 1;
+                    }
+                    
+                    const noise = ctx.createBufferSource();
+                    noise.buffer = buffer;
+                    
+                    const filter = ctx.createBiquadFilter();
+                    filter.type = "bandpass";
+                    filter.frequency.value = 1000;
+                    
+                    const noiseGain = ctx.createGain();
+                    noiseGain.gain.setValueAtTime(0.25, ctx.currentTime);
+                    noiseGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
+                    
+                    noise.connect(filter);
+                    filter.connect(noiseGain);
+                    noiseGain.connect(ctx.destination);
+                    
+                    noise.start();
+                    noise.stop(ctx.currentTime + 0.09);
+                } catch (e) {
+                    console.log("Audio play failed:", e);
+                }
+            }
+        };
+
+        // 渲染 20 個商品方塊
+        function initGrid() {
+            const grid = document.getElementById("catalog-grid");
+            grid.innerHTML = "";
+
+            ITEMS.forEach(item => {
+                const card = document.createElement("div");
+                card.className = "catalog-card";
+                card.id = `catalog-card-${item.id}`;
+                card.innerHTML = `
+                    <div class="card-number">${item.id}</div>
+                    <div class="card-price-tag">底價: $${item.basePrice}</div>
+                    <div class="card-vector-box">${item.svg}</div>
+                    <div class="card-name">${item.name}</div>
+                    <div class="card-bottom-price">起標: NT$ ${item.basePrice}</div>
+                    
+                    <!-- 紅色已售蓋章印章 -->
+                    <div class="stamp-sold">
+                        <span class="stamp-sold-title">已 售</span>
+                        <span class="stamp-sold-sub">SOLD OUT</span>
+                    </div>
+
+                    <!-- 得標者資訊 -->
+                    <div class="sold-winner-badge" id="winner-badge-${item.id}">得標：本組</div>
+                `;
+
+                // 綁定手動點擊事件
+                card.addEventListener("click", () => {
+                    toggleManualSold(item.id);
+                });
+
+                grid.appendChild(card);
+            });
+        }
+
+        // 手動切換已售狀態 (當老師投影看板時，可以直接用滑鼠或平板點擊卡片)
+        function toggleManualSold(id) {
+            const card = document.getElementById(`catalog-card-${id}`);
+            const isSold = card.classList.contains("sold");
+            
+            AudioStamp.play();
+
+            if (isSold) {
+                card.classList.remove("sold");
+                manualSoldState[id] = false;
+                // 清理 LocalStorage 中的這筆，以防連動模式覆寫
+                removeLocalStorageItem(id);
+            } else {
+                card.classList.add("sold");
+                manualSoldState[id] = true;
+                const badge = document.getElementById(`winner-badge-${id}`);
+                badge.textContent = "手動已售 ⓘ";
+            }
+        }
+
+        function removeLocalStorageItem(id) {
+            try {
+                let soldItems = JSON.parse(localStorage.getItem('sold_items') || '{}');
+                if (soldItems[id]) {
+                    delete soldItems[id];
+                    localStorage.setItem('sold_items', JSON.stringify(soldItems));
+                }
+            } catch (e) {}
+        }
+
+        // 重設所有狀態
+        function resetAllStatuses() {
+            AudioStamp.play();
+            ITEMS.forEach(item => {
+                const card = document.getElementById(`catalog-card-${item.id}`);
+                card.classList.remove("sold");
+                manualSoldState[item.id] = false;
+            });
+            try {
+                localStorage.removeItem('sold_items');
+            } catch (e) {}
+        }
+
+        // 實時讀取 LocalStorage 同步遊戲中已售狀態
+        let lastSoldKeysStr = "";
+        function syncWithLocalStorage() {
+            try {
+                const soldItems = JSON.parse(localStorage.getItem('sold_items') || '{}');
+                const soldKeys = Object.keys(soldItems);
+                const soldKeysStr = JSON.stringify(soldItems);
+                
+                // 比對是否有新增的得標商品，有則播放音效
+                if (soldKeysStr !== lastSoldKeysStr) {
+                    // 找出新售出的商品
+                    soldKeys.forEach(id => {
+                        const card = document.getElementById(`catalog-card-${id}`);
+                        if (card && !card.classList.contains("sold")) {
+                            card.classList.add("sold");
+                            AudioStamp.play();
+                        }
+                        
+                        const winnerInfo = soldItems[id];
+                        const badge = document.getElementById(`winner-badge-${id}`);
+                        if (badge) {
+                            badge.textContent = `${winnerInfo.winner} ($${winnerInfo.price})`;
+                        }
+                    });
+
+                    // 找出被重置/刪除的商品
+                    ITEMS.forEach(item => {
+                        if (!soldItems[item.id] && !manualSoldState[item.id]) {
+                            const card = document.getElementById(`catalog-card-${item.id}`);
+                            if (card) card.classList.remove("sold");
+                        }
+                    });
+
+                    lastSoldKeysStr = soldKeysStr;
+                }
+            } catch (e) {
+                console.error("Sync error:", e);
+            }
+        }
+
+        // 初始化與定時器
+        window.onload = function() {
+            initGrid();
+            // 每秒同步一次 LocalStorage 狀態
+            setInterval(syncWithLocalStorage, 1000);
+        };
+
+        // 吉祥物拖曳邏輯
+        (function() {
+            const draggable = document.getElementById('mascot-draggable');
+            if (!draggable) return;
+
+            let isDragging = false;
+            let startX, startY;
+            let initialX, initialY;
+
+            // 初始化位置
+            draggable.style.left = '20px';
+            draggable.style.bottom = '20px';
+
+            function dragStart(e) {
+                const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+                const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+
+                isDragging = true;
+                const rect = draggable.getBoundingClientRect();
+                
+                startX = clientX - rect.left;
+                startY = clientY - rect.top;
+
+                initialX = rect.left;
+                initialY = rect.top;
+                
+                draggable.style.bottom = 'auto';
+                draggable.style.right = 'auto';
+                draggable.style.left = `${initialX}px`;
+                draggable.style.top = `${initialY}px`;
+            }
+
+            function drag(e) {
+                if (!isDragging) return;
+                
+                // 只有在拖曳時才呼叫 preventDefault 防止背景滾動
+                if (e.cancelable) {
+                    e.preventDefault();
+                }
+
+                const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+                const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+
+                let newX = clientX - startX;
+                let newY = clientY - startY;
+
+                const rect = draggable.getBoundingClientRect();
+                const minX = 0;
+                const minY = 0;
+                const maxX = window.innerWidth - rect.width;
+                const maxY = window.innerHeight - rect.height;
+
+                if (newX < minX) newX = minX;
+                if (newX > maxX) newX = maxX;
+                if (newY < minY) newY = minY;
+                if (newY > maxY) newY = maxY;
+
+                draggable.style.left = `${newX}px`;
+                draggable.style.top = `${newY}px`;
+            }
+
+            function dragEnd() {
+                isDragging = false;
+            }
+
+            // 滑鼠事件
+            draggable.addEventListener('mousedown', dragStart);
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', dragEnd);
+
+            // 觸控事件
+            draggable.addEventListener('touchstart', dragStart, { passive: true });
+            document.addEventListener('touchmove', drag, { passive: false });
+            document.addEventListener('touchend', dragEnd);
+        })();
+    </script>
+</body>
+</html>
