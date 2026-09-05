@@ -373,26 +373,82 @@
             color: #94a3b8;
         }
 
-        /* 標註成交資訊 */
+        /* 標註成交資訊 (大螢幕超清晰得標組別與得標價) */
         .sold-winner-badge {
             position: absolute;
-            bottom: 4px;
-            background-color: rgba(30, 41, 59, 0.95);
-            color: #fbbf24;
-            font-size: 9.5px;
-            font-weight: 800;
-            padding: 1px 6px;
-            border-radius: 4px;
-            border: 1px solid var(--border-dark);
+            bottom: 6px;
+            left: 6px;
+            right: 6px;
+            background: linear-gradient(135deg, #090d16 0%, #1e293b 100%);
+            border: 2.5px solid #f59e0b;
+            border-radius: 8px;
+            padding: 5px 6px;
             z-index: 110;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(245, 158, 11, 0.4);
             opacity: 0;
             transform: translateY(10px);
-            transition: all 0.25s ease;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: none;
         }
 
         .catalog-card.sold .sold-winner-badge {
             opacity: 1;
             transform: translateY(0);
+        }
+
+        /* 成交後隱藏卡片原本的小起標價，給大字號得標組別與金額最佳展示空間 */
+        .catalog-card.sold .card-bottom-price {
+            visibility: hidden;
+        }
+
+        .winner-group-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+        }
+
+        .winner-group-text {
+            color: #ffffff;
+            font-size: 21px; /* 大幅放大！在教室大螢幕投影上極度搶眼醒目 */
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 92%;
+            line-height: 1.2;
+        }
+
+        .winner-price-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            width: 100%;
+            line-height: 1.1;
+        }
+
+        .winner-price-label {
+            font-size: 11.5px;
+            color: #94a3b8;
+            font-weight: 700;
+        }
+
+        .winner-price-text {
+            color: #fbbf24;
+            font-size: 16.5px;
+            font-weight: 900;
+            font-family: 'Outfit', sans-serif;
+            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.6);
+            white-space: nowrap;
         }
 
         /* 音效與底部 */
@@ -816,7 +872,6 @@
                     for (let i = 0; i < bufferSize; i++) {
                         data[i] = Math.random() * 2 - 1;
                     }
-                    
                     const noise = ctx.createBufferSource();
                     noise.buffer = buffer;
                     
@@ -863,8 +918,8 @@
                         <span class="stamp-sold-sub">SOLD OUT</span>
                     </div>
 
-                    <!-- 得標者資訊 -->
-                    <div class="sold-winner-badge" id="winner-badge-${item.id}">得標：本組</div>
+                    <!-- 得標者資訊 (大字號得標組別與價格) -->
+                    <div class="sold-winner-badge" id="winner-badge-${item.id}"></div>
                 `;
 
                 // 綁定手動點擊事件：開啟得標輸入彈窗
@@ -874,6 +929,33 @@
 
                 grid.appendChild(card);
             });
+        }
+
+        // 統一更新得標組別與得標價的 HTML (大字號高辨識度)
+        function updateBadgeContent(badge, group, price) {
+            if (!badge) return;
+            if (!group || group === "已售出") {
+                badge.innerHTML = `
+                    <div class="winner-group-row">
+                        <i class="fa-solid fa-stamp" style="color:#ef4444; font-size:16px;"></i>
+                        <span class="winner-group-text" style="color:#fca5a5; font-size:19px;">已售出</span>
+                    </div>
+                `;
+            } else {
+                const formattedPrice = (price !== undefined && price !== null && !isNaN(price)) ? Number(price).toLocaleString() : "";
+                badge.innerHTML = `
+                    <div class="winner-group-row">
+                        <i class="fa-solid fa-trophy" style="color:#fbbf24; font-size:17px; flex-shrink:0;"></i>
+                        <span class="winner-group-text">${group}</span>
+                    </div>
+                    ${formattedPrice ? `
+                        <div class="winner-price-row">
+                            <span class="winner-price-label">得標價</span>
+                            <span class="winner-price-text">NT$ ${formattedPrice}</span>
+                        </div>
+                    ` : ""}
+                `;
+            }
         }
 
         // 當前彈窗選取中的商品 ID
@@ -943,7 +1025,7 @@
             }
         }
 
-        // 確認輸入得標組別與金額
+        // 確認得標並標記已售
         function confirmWinner() {
             if (!currentModalItemId) return;
             const id = currentModalItemId;
@@ -967,9 +1049,7 @@
             }
 
             const badge = document.getElementById(`winner-badge-${id}`);
-            if (badge) {
-                badge.textContent = `${group} ($${price.toLocaleString()})`;
-            }
+            updateBadgeContent(badge, group, price);
 
             const soldData = {
                 winner: group,
@@ -1003,9 +1083,7 @@
             }
 
             const badge = document.getElementById(`winner-badge-${id}`);
-            if (badge) {
-                badge.textContent = "已售出";
-            }
+            updateBadgeContent(badge, "已售出");
 
             const soldData = {
                 winner: "已售出",
@@ -1037,7 +1115,7 @@
 
             const badge = document.getElementById(`winner-badge-${id}`);
             if (badge) {
-                badge.textContent = "得標：本組";
+                badge.innerHTML = "";
             }
 
             delete manualSoldState[id];
@@ -1063,7 +1141,7 @@
                 const card = document.getElementById(`catalog-card-${item.id}`);
                 if (card) card.classList.remove("sold");
                 const badge = document.getElementById(`winner-badge-${item.id}`);
-                if (badge) badge.textContent = "得標：本組";
+                if (badge) badge.innerHTML = "";
                 delete manualSoldState[item.id];
             });
             try {
@@ -1105,8 +1183,8 @@
                         
                         const winnerInfo = soldItems[id];
                         const badge = document.getElementById(`winner-badge-${id}`);
-                        if (badge) {
-                            badge.textContent = `${winnerInfo.winner} ($${winnerInfo.price})`;
+                        if (badge && winnerInfo) {
+                            updateBadgeContent(badge, winnerInfo.winner, winnerInfo.price);
                         }
                     });
 
@@ -1115,6 +1193,8 @@
                         if (!soldItems[item.id] && !manualSoldState[item.id]) {
                             const card = document.getElementById(`catalog-card-${item.id}`);
                             if (card) card.classList.remove("sold");
+                            const badge = document.getElementById(`winner-badge-${item.id}`);
+                            if (badge) badge.innerHTML = "";
                         }
                     });
 
@@ -1128,6 +1208,7 @@
         // 初始化與定時器
         window.onload = function() {
             initGrid();
+            syncWithLocalStorage(); // 頁面載入立即同步一次現有得標狀態
             // 每秒同步一次 LocalStorage 狀態
             setInterval(syncWithLocalStorage, 1000);
         };
