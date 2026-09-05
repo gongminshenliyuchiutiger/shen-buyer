@@ -1,0 +1,1663 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>利餘金鰲買 - 紙本學習單</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --ink: #111827;
+            --ink-light: #4b5563;
+            --border-color: #374151;
+            --border-dark: #111827;
+            --accent: #2563eb;
+            --gold: #d97706;
+            --green: #15803d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #475569;
+            color: var(--ink);
+            line-height: 1.25;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        /* 學習單容器 */
+        .worksheet-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 0 60px 0;
+            gap: 28px;
+        }
+
+        /* 每一頁標準橫式紙張 (297mm x 210mm) */
+        .a4-landscape-page {
+            width: 297mm;
+            height: 210mm;
+            background: #ffffff;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+            padding: 5mm 6mm;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            box-sizing: border-box;
+            overflow: hidden;
+            page-break-after: always;
+            break-after: page;
+        }
+
+        /* 頂部抬頭區 */
+        .sheet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 2px solid var(--border-dark);
+            padding-bottom: 4px;
+            margin-bottom: 4px;
+        }
+
+        .title-block {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .main-title {
+            font-size: 19px;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            color: #0f172a;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+        }
+
+        .info-bar {
+            display: flex;
+            gap: 10px;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--ink);
+        }
+
+        .info-field {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .underline {
+            display: inline-block;
+            border-bottom: 1.5px solid #000;
+            width: 46px;
+            height: 14px;
+        }
+
+        .underline-lg {
+            width: 85px;
+        }
+
+        .underline-fill {
+            display: inline-block;
+            border-bottom: 1.5px solid #000;
+            flex-grow: 1;
+            height: 15px;
+        }
+
+        /* 右上角按鈕組 (螢幕顯示、列印時自動隱藏) */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-home-corner {
+            background-color: #475569;
+            color: #ffffff;
+            border: 1.5px solid #1e293b;
+            border-radius: 6px;
+            padding: 3px 8px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 2px 2px 0px #1e293b;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+
+        .btn-home-corner:hover {
+            background-color: #334155;
+            transform: translate(-1px, -1px);
+            box-shadow: 3px 3px 0px #1e293b;
+        }
+
+        .btn-home-corner:active {
+            transform: translate(1px, 1px);
+            box-shadow: none;
+        }
+
+        .btn-print-corner {
+            background-color: #2563eb;
+            color: #ffffff;
+            border: 1.5px solid #1e293b;
+            border-radius: 6px;
+            padding: 3px 8px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 2px 2px 0px #1e293b;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .btn-print-corner:hover {
+            background-color: #1d4ed8;
+            transform: translate(-1px, -1px);
+            box-shadow: 3px 3px 0px #1e293b;
+        }
+
+        .btn-print-corner:active {
+            transform: translate(1px, 1px);
+            box-shadow: none;
+        }
+
+        /* 頁尾 */
+        .sheet-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 9px;
+            color: #64748b;
+            padding-top: 2px;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 2px;
+        }
+
+        .footer-notice {
+            margin-left: auto;
+            text-align: right;
+            font-weight: 700;
+            color: #334155;
+        }
+
+        /* ================= 學習單 ①：拍賣項目清單 (極致抗溢出、安全高度 142mm) ================= */
+        .catalog-grid-sheet {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(4, minmax(0, 1fr));
+            gap: 3.5px;
+            flex-grow: 1;
+            height: 142mm;
+            max-height: 142mm;
+        }
+
+        .sheet-card {
+            border: 1.5px solid #1f2937;
+            border-radius: 4px;
+            padding: 2px 4px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: #ffffff;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed #cbd5e1;
+            padding-bottom: 1px;
+            margin-bottom: 1px;
+        }
+
+        .item-badge {
+            background: #1e293b;
+            color: #fff;
+            font-size: 9.5px;
+            font-weight: 900;
+            border-radius: 3px;
+            padding: 0.5px 3px;
+        }
+
+        .price-tag {
+            font-size: 9.5px;
+            font-weight: 800;
+            color: #047857;
+        }
+
+        .card-content {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin: 1px 0;
+        }
+
+        .item-icon {
+            width: 26px;
+            height: 26px;
+            min-width: 26px;
+            border: 1px solid #94a3b8;
+            border-radius: 4px;
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1px;
+        }
+
+        .item-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .item-meta {
+            flex-grow: 1;
+            overflow: hidden;
+        }
+
+        .item-title {
+            font-size: 9.5px;
+            font-weight: 800;
+            line-height: 1.15;
+            color: #0f172a;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .item-desc {
+            font-size: 8px;
+            color: #475569;
+            line-height: 1.1;
+            margin-top: 1px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-strategy-zone {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 3px;
+            padding: 1.5px 3px;
+            font-size: 8.5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1px;
+        }
+
+        .strategy-checks {
+            display: flex;
+            gap: 2px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .card-budget-line {
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .fill-sm {
+            border-bottom: 1.5px solid #000;
+            display: inline-block;
+            width: 30px;
+            height: 10px;
+        }
+
+        /* ================= 學習單 ②：預算規劃與競標記錄單 ================= */
+        .formula-bar-wide {
+            background: #f0fdf4;
+            border: 1.5px solid #15803d;
+            border-radius: 6px;
+            padding: 5px 12px;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11.5px;
+            font-weight: 700;
+        }
+
+        .formula-val {
+            font-size: 13.5px;
+            font-weight: 900;
+            color: #15803d;
+        }
+
+        .formula-line {
+            display: inline-block;
+            border-bottom: 1.5px solid #15803d;
+            width: 48px;
+            height: 12px;
+        }
+
+        .budget-tables-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            flex-grow: 1;
+            height: 138mm;
+        }
+
+        .table-col-wide {
+            border: 1.5px solid #374151;
+            border-radius: 6px;
+            overflow: hidden;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .table-wide {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10px;
+            height: 100%;
+        }
+
+        .table-wide th, .table-wide td {
+            border: 1px solid #d1d5db;
+            padding: 2.5px 3px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .table-wide th {
+            background-color: #f3f4f6;
+            color: #111827;
+            font-weight: 800;
+            font-size: 9.5px;
+            padding: 3.5px 2px;
+        }
+
+        .table-wide td {
+            color: #111827;
+            font-size: 10.5px;
+            line-height: 1.2;
+        }
+
+        .budget-bottom-summary {
+            margin-top: 5px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .summary-metric-card {
+            border: 1.5px solid #374151;
+            border-radius: 6px;
+            padding: 5px 8px;
+            background: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 10.5px;
+            font-weight: 700;
+        }
+
+        .summary-metric-card strong {
+            font-size: 12.5px;
+        }
+
+        /* ================= 學習單 ③：戰利品思辨與生存挑戰單 (超大格、好寫、寬敞版) ================= */
+        .stage3-container {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex-grow: 1;
+            height: 174mm;
+            justify-content: space-between;
+        }
+
+        /* 區塊 1：戰利品思辨 (消除空隙、10列均勻寬敞展開) */
+        .stage3-block-classify {
+            border: 1.5px solid #374151;
+            border-radius: 6px;
+            padding: 6px 10px;
+            background: #ffffff;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .block-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1.5px solid #1e293b;
+            padding-bottom: 3px;
+            margin-bottom: 2px;
+        }
+
+        .block-title {
+            font-size: 12px;
+            font-weight: 900;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .block-tip {
+            font-size: 9.5px;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .table-classify-wide {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+            flex-grow: 1;
+            margin-bottom: 4px;
+        }
+
+        .table-classify-wide th, .table-classify-wide td {
+            border: 1.5px solid #4b5563;
+            padding: 3px 8px;
+            text-align: center;
+        }
+
+        .table-classify-wide th {
+            background-color: #f1f5f9;
+            font-weight: 800;
+            color: #1e293b;
+            font-size: 10.5px;
+            padding: 4px 6px;
+        }
+
+        .table-classify-wide tbody tr {
+            height: 28px; /* 均勻拉高，完全不擁擠、超好書寫 */
+        }
+
+        .table-classify-wide tbody td {
+            font-size: 11px;
+            padding: 3px 6px;
+            vertical-align: middle;
+        }
+
+        .table-classify-wide td.text-left {
+            text-align: left;
+        }
+
+        /* 盲目追標檢討書寫框 */
+        .reflection-box {
+            background: #fffbeb;
+            border: 1.5px dashed #d97706;
+            border-radius: 5px;
+            padding: 4px 8px;
+        }
+
+        .reflection-title {
+            font-size: 10px;
+            font-weight: 800;
+            color: #92400e;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 3px;
+        }
+
+        .write-line {
+            border-bottom: 1.5px solid #475569;
+            height: 16px;
+            width: 100%;
+            display: block;
+        }
+
+        /* 區塊 2：生存挑戰 6 大事件 (雙欄緊緻對照表，高度僅 30mm，省空間留給手寫) */
+        .stage3-block-survival {
+            border: 1.5px solid #374151;
+            border-radius: 6px;
+            padding: 5px 10px;
+            background: #ffffff;
+        }
+
+        .survival-table-compact {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 9.5px;
+        }
+
+        .survival-table-compact th, .survival-table-compact td {
+            border: 1px solid #cbd5e1;
+            padding: 3px 6px;
+        }
+
+        .survival-table-compact th {
+            background-color: #f8fafc;
+            font-weight: 800;
+            color: #1e293b;
+            text-align: center;
+        }
+
+        .survival-table-compact tr:nth-child(even) {
+            background-color: #fcfcfc;
+        }
+
+        .tag-danger {
+            color: #dc2626;
+            font-weight: 800;
+        }
+
+        .tag-bonus {
+            color: #16a34a;
+            font-weight: 800;
+        }
+
+        /* 區塊 3：最終財務體質總診斷 */
+        .stage3-block-diagnose {
+            border: 1.5px solid #15803d;
+            background: #f0fdf4;
+            border-radius: 6px;
+            padding: 5px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .diagnose-row-1 {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: #166534;
+        }
+
+        .diagnose-formula-text {
+            font-size: 10.5px;
+        }
+
+        .diagnose-total-badge {
+            background: #15803d;
+            color: #ffffff;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11.5px;
+            font-weight: 900;
+        }
+
+        .diagnose-row-2 {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 9.5px;
+            font-weight: 700;
+            color: #374151;
+            border-top: 1px dashed #bbf7d0;
+            padding-top: 2px;
+        }
+
+        .diagnose-row-3 {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 9.5px;
+            font-weight: 700;
+            color: #1e293b;
+            border-top: 1px dashed #bbf7d0;
+            padding-top: 2px;
+        }
+
+        /* ================= 列印樣式 (單頁鎖定、全瀏覽器徹底抗溢出) ================= */
+        @media print {
+            @page {
+                size: A4 landscape;
+                margin: 0;
+            }
+
+            html, body {
+                width: 297mm !important;
+                height: 210mm !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: none !important;
+                color: #000000 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                overflow: hidden !important;
+            }
+
+            .btn-print-corner, .btn-home-corner {
+                display: none !important;
+            }
+
+            .worksheet-container {
+                padding: 0 !important;
+                margin: 0 !important;
+                gap: 0 !important;
+            }
+
+            .a4-landscape-page {
+                box-shadow: none !important;
+                margin: 0 !important;
+                width: 297mm !important;
+                height: 210mm !important;
+                max-height: 210mm !important;
+                padding: 5mm 7mm !important;
+                box-sizing: border-box !important;
+                page-break-after: always !important;
+                page-break-inside: avoid !important;
+                break-after: page !important;
+                break-inside: avoid !important;
+                overflow: hidden !important;
+            }
+
+            /* 獨立單頁列印控制 */
+            body.print-p1 #page-2, body.print-p1 #page-3 {
+                display: none !important;
+            }
+
+            body.print-p2 #page-1, body.print-p2 #page-3 {
+                display: none !important;
+            }
+
+            body.print-p3 #page-1, body.print-p3 #page-2 {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="worksheet-container">
+
+        <!-- ========================================================
+             學習單 ①：【利餘金鰲買 — 拍賣項目清單】
+             ======================================================== -->
+        <section class="a4-landscape-page" id="page-1">
+            <header class="sheet-header">
+                <div class="title-block">
+                    <h1 class="main-title">利餘金鰲買 — 拍賣項目清單</h1>
+                </div>
+                <div class="header-right">
+                    <div class="info-bar">
+                        <div class="info-field">班級：<span class="underline"></span></div>
+                        <div class="info-field">組別：<span class="underline"></span></div>
+                        <div class="info-field">姓名／座號：<span class="underline underline-lg"></span></div>
+                        <div class="info-field">日期：<span class="underline"></span></div>
+                    </div>
+                    <div class="header-actions">
+                        <a href="index.html" class="btn-home-corner" title="返回主頁">
+                            <i class="fa-solid fa-house"></i> 回主頁
+                        </a>
+                        <button class="btn-print-corner" onclick="printPage(1)" title="列印此頁">
+                            <i class="fa-solid fa-print"></i> 列印
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 20項商品 4x5 網格 (精準 154mm 高度，絕對不溢頁) -->
+            <div class="catalog-grid-sheet">
+                <!-- 01 -->
+                <div class="sheet-card">
+                    <div class="card-top">
+                        <span class="item-badge">#01</span>
+                        <span class="price-tag">起標 $500｜市價 $7,000</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="item-icon">
+                            <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#3b82f6" stroke="#1e293b" stroke-width="4"/><rect x="34" y="32" width="13" height="24" rx="6" fill="#ffffff" stroke="#1e293b" stroke-width="3"/><path d="M 40 56 L 40 72" stroke="#1e293b" stroke-width="3"/><rect x="53" y="32" width="13" height="24" rx="6" fill="#ffffff" stroke="#1e293b" stroke-width="3"/><path d="M 59 56 L 59 72" stroke="#1e293b" stroke-width="3"/></svg>
+                        </div>
+                        <div class="item-meta">
+                            <div class="item-title">極致降噪 AirPods Pro 耳機</div>
+                            <div class="item-desc">極致主動降噪，享受純淨音質與無干擾世界</div>
+                        </div>
+                    </div>
+                    <div class="card-strategy-zone">
+                        <div class="strategy-checks">策略: □必搶 □評估 □放棄</div>
+                        <div class="card-budget-line">預算: $<span class="fill-sm"></span></div>
+                    </div>
+                </div>
+
+                <!-- 02 -->
+                <div class="sheet-card">
+                    <div class="card-top">
+                        <span class="item-badge">#02</span>
+                        <span class="price-tag">起標 $200｜市價 $6,000</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="item-icon">
+                            <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#f59e0b" stroke="#1e293b" stroke-width="4"/><path d="M 36 38 L 40 76 A 4 4 0 0 0 44 80 L 56 80 A 4 4 0 0 0 60 76 L 64 38 Z" fill="#ffedd5" stroke="#1e293b" stroke-width="3"/><rect x="33" y="32" width="34" height="6" fill="#ef4444" stroke="#1e293b" stroke-width="3" rx="2"/><path d="M 50 32 L 56 16" stroke="#1e293b" stroke-width="4"/></svg>
+                        </div>
+                        <div class="item-meta">
+                            <div class="item-title">網紅四季厚奶茶 100 杯</div>
+                            <div class="item-desc">每日一杯療癒靈魂，享受爆棚的甜蜜幸福感</div>
+                        </div>
+                    </div>
+                    <div class="card-strategy-zone">
+                        <div class="strategy-checks">策略: □必搶 □評估 □放棄</div>
+                        <div class="card-budget-line">預算: $<span class="fill-sm"></span></div>
+                    </div>
+                </div>
+
+                <!-- 03 -->
+                <div class="sheet-card">
+                    <div class="card-top">
+                        <span class="item-badge">#03</span>
+                        <span class="price-tag">起標 $1,000｜市價 $6,800</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="item-icon">
+                            <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#ec4899" stroke="#1e293b" stroke-width="4"/><g transform="rotate(-15 50 50)"><rect x="24" y="36" width="52" height="28" rx="4" fill="#ffffff" stroke="#1e293b" stroke-width="3"/><circle cx="34" cy="50" r="4" fill="#ec4899" stroke="#1e293b" stroke-width="1.5"/><line x1="46" y1="44" x2="68" y2="44" stroke="#1e293b" stroke-width="2.5"/><line x1="46" y1="52" x2="68" y2="52" stroke="#1e293b" stroke-width="2.5"/></g></svg>
+                        </div>
+                        <div class="item-meta">
+                            <div class="item-title">人氣樂團演唱會特區門票</div>
+                            <div class="item-desc">搖滾第一排震撼視聽，此生必去的燃魂狂歡夜</div>
+                        </div>
+                    </div>
+                    <div class="card-strategy-zone">
+                        <div class="strategy-checks">策略: □必搶 □評估 □放棄</div>
+                        <div class="card-budget-line">預算: $<span class="fill-sm"></span></div>
+                    </div>
+                </div>
+
+                <!-- 04 -->
+                <div class="sheet-card">
+                    <div class="card-top">
+                        <span class="item-badge">#04</span>
+                        <span class="price-tag">起標 $1,000｜市價 $12,000</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="item-icon">
+                            <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#10b981" stroke="#1e293b" stroke-width="4"/><path d="M 32 42 L 40 36 L 50 46 L 60 36 L 68 42 L 68 76 L 32 76 Z" fill="#059669" stroke="#1e293b" stroke-width="3"/><path d="M 50 46 L 50 76" stroke="#fbbf24" stroke-width="3.5"/></svg>
+                        </div>
+                        <div class="item-meta">
+                            <div class="item-title">極致防寒 GORE-TEX 外套</div>
+                            <div class="item-desc">頂級機能面料，全天候防風防水、保暖透氣</div>
+                        </div>
+                    </div>
+                    <div class="card-strategy-zone">
+                        <div class="strategy-checks">策略: □必搶 □評估 □放棄</div>
+                        <div class="card-budget-line">預算: $<span class="fill-sm"></span></div>
+                    </div>
+                </div>
+
+                <!-- 05 -->
+                <div class="sheet-card">
+                    <div class="card-top">
+                        <span class="item-badge">#05</span>
+                        <span class="price-tag">起標 $1,000｜市價 $15,000</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="item-icon">
+                            <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#06b6d4" stroke="#1e293b" stroke-width="4"/><circle cx="34" cy="62" r="12" fill="none" stroke="#1e293b" stroke-width="3"/><circle cx="66" cy="62" r="12" fill="none" stroke="#1e293b" stroke-width="3"/><path d="M 34 62 L 48 44 L 62 44 L 66 62 M 48 44 L 54 62 M 44 38 L 52 38" fill="none" stroke="#1e293b" stroke-width="3"/></svg>
+                        </div>
+                        <div class="item-meta">
+                            <div class="item-title">捷安特公路碳纖維單車</div>
+                            <div class="item-desc">極速破風、輕量操控，享受公路的奔馳快感</div>
+                        </div>
+                    </div>
+                    <div class="card-strategy-zone">
+                        <div class="strategy-checks">策略: □必搶 □評估 □放棄</div>
+                        <div class="card-budget-line">預算: $<span class="fill-sm"></span></div>
+                    </div>
+                </div>
+
+                <!-- 06 -->
+                <div class="sheet-card">
+                    <div class="card-top">
+                        <span class="item-badge">#06</span>
+                        <span class="price-tag">起標 $200｜市價 $1,000</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="item-icon">
+                            <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#84cc16" stroke="#1e293b" stroke-width="4"/><path d="M 50 75 L 50 45" stroke="#78350f" stroke-width="4"/><path d="M 50 45 C 38 45 32 30 50 22 C 68 30 62 45 50 45 Z" fill="#22c55e" stroke="#1e293b" stroke-width="3"/></svg>
+                        </div>
+                        <div class="item-meta">
+                            <div class="item-title">全球植樹與減碳計畫專案</div>
+                            <div class="item-desc">為地球種下綠意生機，攜手守護綠色未來</div>
+                        </div>
+                    </div>
+                    <div class="card-strategy-zone">
+                        <div class="strategy-checks">策略: □必搶 □評估 □放棄</div>
+                        <div class="card-budget-line">預算: $<span class="fill-sm"></span></div>
+                    </div>
+                </div>
+
+                <!-- 07 -->
+                <div class="sheet-card">
+                    <div class="card-top">
+                        <span class="item-badge">#07</span>
+                        <span class="price-tag">起標 $500｜市價 $13,000</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="item-icon">
+                            <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#a855f7" stroke="#1e293b" stroke-width="4"/><rect x="28" y="38" width="44" height="24" rx="4" fill="#ffffff" stroke="#1e293b" stroke-width="3"/><rect x="28" y="38" width="10" height="24" rx="2" fill="#ef4444" stroke="#1e293b" stroke-width="2"/><rect x="62" y="38" width="10" height="24" rx="2" fill="#3b82f6" stroke="#1e293b" stroke-width="2"/><circle cx="33" cy="50" r="2" fill="#1e293b"/><circle cx="67" cy="50" r="2" fill="#1e293b"/></svg>
+                        </div>
+                        <div class="item-meta">
+                            <div class="item-title">任天堂 Switch 2 豪華組</div>
+                            <div class="item-desc">次世代熱門旗艦主機，派對聚會的歡樂焦點</div>
+                        </div>
+                    </div>
+                    <div class="card-strategy-zone">
+                        <div class="strategy-checks">策略: □必搶 □評估 □放棄</div>
+                        <div class="card-budget-line">預算: $<span class="fill-sm"></span></div>
+                    </div>
+                </div>
+
+                <!-- 08 -->
+                <div class="sheet-card">
+                    <div class="card-top">
+                        <span class="item-badge">#08</span>
+                        <span class="price-tag">起標 $500｜市價 $5,000</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="item-icon">
+                            <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#14b8a6" stroke="#1e293b" stroke-width="4"/><path d="M 50 28 L 68 36 L 68 55 C 68 68, 50 75, 50 75 C 50 75, 32 68, 32 55 L 32 36 Z" fill="#ffffff" stroke="#1e293b" stroke-width="3"/><path d="M 44 52 L 49 57 L 58 46" fill="none" stroke="#14b8a6" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                        <div class="item-meta">
+                            <div class="item-title">健檢與重大傷病平安保險</div>
+                            <div class="item-desc">全方位健康安全保障，打造最堅實的安心後盾</div>
+                        </div>
+                    </div>
+                    <div class="card-strategy-zone">
+                        <div class="strategy-checks">策略: □必搶 □評估 □放棄</div>
+                        <div class="card-budget-line">預算: $<span class="fill-sm"></span></div>
+                    </div>
+                </div>
+
+                <!-- 09 -->
+                <div class="sheet-card">
+                    <div class="card-top">
+                        <span class="item-badge">#09</span>
+                        <span class="price-tag">起標 $300｜市價 $2,000</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="item-icon">
+                            <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#f43f5e" stroke="#1e293b" stroke-width="4"/><rect x="32" y="44" width="36" height="32" rx="2" fill="#ffffff" stroke="#1e293b" stroke-width="3"/><path d="M 50 44 L 50 76 M 32 60 L 68 60" stroke="#f43f5e" stroke-width="3"/><path d="M 50 44 C 42 36, 42 26, 50 44 C 58 26, 58 36, 50 44 Z" fill="#f43f5e" stroke="#1e293b" stroke-width="2.5"/></svg>
+                        </div>
+                        <div class="item-meta">
+                            <div class="item-title">精美特製家人生日大禮包</div>
+                            <div class="item-desc">滿載溫暖心意的客製驚喜，獻上最珍貴的感動</div>
+                        </div>
+                    </div>
+                    <div class="card-strategy-zone">
+                        <div class="strategy-checks">策略: □必搶 □評估 □放棄</div>
+                        <div class="card-budget-line">預算: $<span class="fill-sm"></span></div>
+                    </div>
+                </div>
+
+                <!-- 10 -->
+                <div class="sheet-card">
+                    <div class="card-top">
+                        <span class="item-badge">#10</span>
+                        <span class="price-tag">起標 $2,000｜市價 $36,000</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="item-icon">
+                            <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#475569" stroke="#1e293b" stroke-width="4"/><rect x="26" y="34" width="48" height="32" rx="3" fill="#22c55e" stroke="#1e293b" stroke-width="3"/><circle cx="42" cy="50" r="10" fill="#334155" stroke="#1e293b" stroke-width="3"/><circle cx="58" cy="50" r="10" fill="#334155" stroke="#1e293b" stroke-width="3"/></svg>
+                        </div>
+                        <div class="item-meta">
+                            <div class="item-title">RTX 5080 頂級旗艦顯卡</div>
+                            <div class="item-desc">怪獸級頂級光追效能，征服所有 3A 遊戲大作</div>
+                        </div>
+                    </div>
+                    <div class="card-strategy-zone">
+                        <div class="strategy-checks">策略: □必搶 □評估 □放棄</div>
+                        <div class="card-budget-line">預算: $<span class="fill-sm"></span></div>
+                    </div>
+                </div>
+
+                <!-- 11 -->
+                <div class="sheet-card">
+                    <div class="card-top">
+                        <span class="item-badge">#11</span>
+                        <span class="price-tag">起標 $3,000｜市價 $40,000</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="item-icon">
+                            <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#60a5fa" stroke="#1e293b" stroke-width="4"/><path d="M 24 55 Q 50 25 76 55 Z" fill="#ffffff" stroke="#1e293b" stroke-width="3"/><path d="M 18 55 L 82 55 Q 82 60 76 60 L 24 60 Q 18 60 18 55 Z" fill="#ef4444" stroke="#1e293b" stroke-width="3"/><path d="M 50 35 L 50 55" stroke="#1e293b" stroke-width="3"/></svg>
+                        </div>
+                        <div class="item-meta">
+                            <div class="item-title">東京五天四夜奢華自由行</div>
+                            <div class="item-desc">漫步繁華澀谷與富士山景，享受極致放鬆假期</div>
+                        </div>
+                    </div>
+                    <div class="card-strategy-zone">
+                        <div class="strategy-checks">策略: □必搶 □評估 □放棄</div>
+                        <div class="card-budget-line">預算: $<span class="fill-sm"></span></div>
+                    </div>
+                </div>
+
+                <!-- 12 -->
+                <div class="sheet-card">
+                    <div class="card-top">
+                        <span class="item-badge">#12</span>
+                        <span class="price-tag">起標 $2,000｜市價 $35,000</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="item-icon">
+                            <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#3b82f6" stroke="#1e293b" stroke-width="4"/><rect x="28" y="30" width="44" height="40" rx="3" fill="#ffffff" stroke="#1e293b" stroke-width="3"/><rect x="32" y="34" width="36" height="32" fill="#1e293b"/><line x1="72" y1="26" x2="82" y2="46" stroke="#1e293b" stroke-width="3"/></svg>
+                        </div>
+                        <div class="item-meta">
+                            <div class="item-title">iPad Pro M4 + Pencil 組</div>
+                            <div class="item-desc">超強 M4 晶片，學習筆記與數位繪圖創作神器</div>
+                        </div>
+                    </div>
+                    <div class="card-strategy-zone">
+                        <div class="strategy-checks">策略: □必搶 □評估 □放棄</div>
+                        <div class="card-budget-line">預算: $<span class="fill-sm"></span></div>
+                    </div>
+                </div>
+
+                <!-- 13 -->
+                <div class="sheet-card">
+                    <div class="card-top">
+                        <span class="item-badge">#13</span>
+                        <span class="price-tag">起標 $500｜市價 $5,000</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="item-icon">
+                            <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#6366f1" stroke="#1e293b" stroke-width="4"/><path d="M 28 64 Q 50 32 72 64 Z" fill="#ef4444" stroke="#1e293b" stroke-width="3"/><rect x="30" y="58" width="40" height="10" fill="#ffffff" stroke="#1e293b" stroke-width="3" rx="2"/><circle cx="38" cy="68" r="6" fill="#1e293b"/><circle cx="62" cy="68" r="6" fill="#1e293b"/></svg>
+                        </div>
+                        <div class="item-meta">
+                            <div class="item-title">Tesla Model 3 自駕體驗券</div>
+                            <div class="item-desc">感受貼背加速與頂尖科技，體驗未來智慧駕馭</div>
+                        </div>
+                    </div>
+                    <div class="card-strategy-zone">
+                        <div class="strategy-checks">策略: □必搶 □評估 □放棄</div>
+                        <div class="card-budget-line">預算: $<span class="fill-sm"></span></div>
+                    </div>
+                </div>
+
+                <!-- 14 -->
+                <div class="sheet-card">
+                    <div class="card-top">
+                        <span class="item-badge">#14</span>
+                        <span class="price-tag">起標 $200｜市價 $800</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="item-icon">
+                            <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#94a3b8" stroke="#1e293b" stroke-width="4"/><rect x="30" y="38" width="40" height="34" rx="3" fill="#ffffff" stroke="#1e293b" stroke-width="3"/><ellipse cx="50" cy="38" rx="20" ry="6" fill="#e2e8f0" stroke="#1e293b" stroke-width="2"/></svg>
+                        </div>
+                        <div class="item-meta">
+                            <div class="item-title">日常必需超柔抽取衛生紙一箱</div>
+                            <div class="item-desc">頂級親膚絲柔觸感，每日居家生活必備首選</div>
+                        </div>
+                    </div>
+                    <div class="card-strategy-zone">
+                        <div class="strategy-checks">策略: □必搶 □評估 □放棄</div>
+                        <div class="card-budget-line">預算: $<span class="fill-sm"></span></div>
+                    </div>
+                </div>
+
+                <!-- 15 -->
+                <div class="sheet-card">
+                    <div class="card-top">
+                        <span class="item-badge">#15</span>
+                        <span class="price-tag">起標 $1,000｜市價 $8,000</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="item-icon">
+                            <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#0284c7" stroke="#1e293b" stroke-width="4"/><rect x="28" y="32" width="44" height="30" rx="3" fill="#ffffff" stroke="#1e293b" stroke-width="3"/><path d="M 40 62 L 32 74 L 68 74 L 60 62 Z" fill="#64748b" stroke="#1e293b" stroke-width="3"/><path d="M 42 42 L 48 48 L 58 38" fill="none" stroke="#22c55e" stroke-width="3.5" stroke-linecap="round"/></svg>
+                        </div>
+                        <div class="item-meta">
+                            <div class="item-title">生成式 AI 與程式實戰課程</div>
+                            <div class="item-desc">掌握前沿 AI 實戰技術，全面升級未來競爭力</div>
+                        </div>
+                    </div>
+                    <div class="card-strategy-zone">
+                        <div class="strategy-checks">策略: □必搶 □評估 □放棄</div>
+                        <div class="card-budget-line">預算: $<span class="fill-sm"></span></div>
+                    </div>
+                </div>
+
+                <!-- 16 -->
+                <div class="sheet-card">
+                    <div class="card-top">
+                        <span class="item-badge">#16</span>
+                        <span class="price-tag">起標 $500｜市價 $8,000</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="item-icon">
+                            <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#10b981" stroke="#1e293b" stroke-width="4"/><circle cx="50" cy="50" r="20" fill="none" stroke="#ffffff" stroke-width="5"/><rect x="42" y="32" width="16" height="36" rx="4" fill="#ffffff" stroke="#1e293b" stroke-width="3"/><rect x="45" y="42" width="10" height="16" fill="#1e293b"/></svg>
+                        </div>
+                        <div class="item-meta">
+                            <div class="item-title">智慧健康手環與運動心率手錶</div>
+                            <div class="item-desc">24小時健康與活力管理，時尚運動隨身教練</div>
+                        </div>
+                    </div>
+                    <div class="card-strategy-zone">
+                        <div class="strategy-checks">策略: □必搶 □評估 □放棄</div>
+                        <div class="card-budget-line">預算: $<span class="fill-sm"></span></div>
+                    </div>
+                </div>
+
+                <!-- 17 -->
+                <div class="sheet-card">
+                    <div class="card-top">
+                        <span class="item-badge">#17</span>
+                        <span class="price-tag">起標 $200｜市價 $2,000</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="item-icon">
+                            <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#fb7185" stroke="#1e293b" stroke-width="4"/><path d="M 38 46 C 30 38, 42 28, 50 38 C 58 28, 70 38, 62 46 L 50 58 Z" fill="#ffffff" stroke="#1e293b" stroke-width="3"/><path d="M 50 64 L 50 74" stroke="#1e293b" stroke-width="3.5"/></svg>
+                        </div>
+                        <div class="item-meta">
+                            <div class="item-title">流浪動物之家暖心飼料捐贈</div>
+                            <div class="item-desc">為毛孩送上一份溫飽與愛，用善意溫暖世界</div>
+                        </div>
+                    </div>
+                    <div class="card-strategy-zone">
+                        <div class="strategy-checks">策略: □必搶 □評估 □放棄</div>
+                        <div class="card-budget-line">預算: $<span class="fill-sm"></span></div>
+                    </div>
+                </div>
+
+                <!-- 18 -->
+                <div class="sheet-card">
+                    <div class="card-top">
+                        <span class="item-badge">#18</span>
+                        <span class="price-tag">起標 $300｜市價 $2,500</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="item-icon">
+                            <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#ef4444" stroke="#1e293b" stroke-width="4"/><rect x="42" y="38" width="16" height="36" rx="2" fill="#ffffff" stroke="#1e293b" stroke-width="3"/><rect x="40" y="32" width="20" height="6" fill="#ef4444" stroke="#1e293b" stroke-width="2"/><path d="M 58 42 Q 68 46 64 58" fill="none" stroke="#1e293b" stroke-width="3"/></svg>
+                        </div>
+                        <div class="item-meta">
+                            <div class="item-title">煙霧探測與強化型滅火器組</div>
+                            <div class="item-desc">高敏度預警與高效滅火，滴水不漏守護居家安全</div>
+                        </div>
+                    </div>
+                    <div class="card-strategy-zone">
+                        <div class="strategy-checks">策略: □必搶 □評估 □放棄</div>
+                        <div class="card-budget-line">預算: $<span class="fill-sm"></span></div>
+                    </div>
+                </div>
+
+                <!-- 19 -->
+                <div class="sheet-card">
+                    <div class="card-top">
+                        <span class="item-badge">#19</span>
+                        <span class="price-tag">起標 $500｜市價 $5,000</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="item-icon">
+                            <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#b45309" stroke="#1e293b" stroke-width="4"/><path d="M 32 45 C 32 35, 68 35, 68 45 C 68 62, 32 62, 32 45 Z" fill="#ffffff" stroke="#1e293b" stroke-width="3"/><path d="M 40 45 Q 50 38 60 45 M 36 50 Q 50 46 64 50" fill="none" stroke="#ef4444" stroke-width="3"/></svg>
+                        </div>
+                        <div class="item-meta">
+                            <div class="item-title">頂級和牛燒肉雙人套餐饗宴</div>
+                            <div class="item-desc">頂級霜降和牛入口即化，尊榮非凡的舌尖饗宴</div>
+                        </div>
+                    </div>
+                    <div class="card-strategy-zone">
+                        <div class="strategy-checks">策略: □必搶 □評估 □放棄</div>
+                        <div class="card-budget-line">預算: $<span class="fill-sm"></span></div>
+                    </div>
+                </div>
+
+                <!-- 20 -->
+                <div class="sheet-card">
+                    <div class="card-top">
+                        <span class="item-badge">#20</span>
+                        <span class="price-tag">起標 $300｜市價 $3,000</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="item-icon">
+                            <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#15803d" stroke="#1e293b" stroke-width="4"/><path d="M 34 46 L 62 46 L 58 74 L 38 74 Z" fill="#ffffff" stroke="#1e293b" stroke-width="3"/><path d="M 62 52 L 68 52 C 72 52, 72 62, 68 62 L 56 62" fill="none" stroke="#1e293b" stroke-width="3"/><path d="M 30 36 L 66 36 L 50 46 Z" fill="#1e293b"/></svg>
+                        </div>
+                        <div class="item-meta">
+                            <div class="item-title">星巴克咖啡豆手沖精品壺</div>
+                            <div class="item-desc">職人級手沖咖啡美學，品味香醇濃郁的優雅時光</div>
+                        </div>
+                    </div>
+                    <div class="card-strategy-zone">
+                        <div class="strategy-checks">策略: □必搶 □評估 □放棄</div>
+                        <div class="card-budget-line">預算: $<span class="fill-sm"></span></div>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="sheet-footer">
+                <span>利餘金鰲買 理財素養教學活動 ｜ 快樂鯉魚秋老虎</span>
+                <span class="footer-notice">★ 拍賣前請小組充分討論各項商品的效益與預算上限！</span>
+            </footer>
+        </section>
+
+        <!-- ========================================================
+             學習單 ②：【利餘金鰲買 — 預算規劃與競標記錄單】
+             ======================================================== -->
+        <section class="a4-landscape-page" id="page-2">
+            <header class="sheet-header">
+                <div class="title-block">
+                    <h1 class="main-title">利餘金鰲買 — 預算規劃與競標記錄單</h1>
+                </div>
+                <div class="header-right">
+                    <div class="info-bar">
+                        <div class="info-field">班級：<span class="underline"></span></div>
+                        <div class="info-field">組別：<span class="underline"></span></div>
+                        <div class="info-field">組員：<span class="underline underline-lg"></span></div>
+                        <div class="info-field">記錄者：<span class="underline"></span></div>
+                    </div>
+                    <div class="header-actions">
+                        <a href="index.html" class="btn-home-corner" title="返回主頁">
+                            <i class="fa-solid fa-house"></i> 回主頁
+                        </a>
+                        <button class="btn-print-corner" onclick="printPage(2)" title="列印此頁">
+                            <i class="fa-solid fa-print"></i> 列印
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 核心理財公式條 -->
+            <div class="formula-bar-wide">
+                <div>
+                    <i class="fa-solid fa-coins text-gold"></i>
+                    <span>初始總資金：</span>
+                    <span class="formula-val">NT$ 20,000</span>
+                </div>
+                <div>
+                    <span>【理財核心公式】收入 (NT$ 20,000) － 預計儲蓄 ($<span class="formula-line"></span>) ＝ 可用商品預算上限 ($<span class="formula-line"></span>)</span>
+                </div>
+                <div>
+                    <i class="fa-solid fa-shield-halved text-green"></i>
+                    <span style="color: #166534;">※ 先存再花，儲蓄為不可動支之緊急預備金！</span>
+                </div>
+            </div>
+
+            <!-- 超大格雙欄 20 項表格 (138mm 高度) -->
+            <div class="budget-tables-container">
+                <!-- 左欄 01~10 -->
+                <div class="table-col-wide">
+                    <table class="table-wide">
+                        <thead>
+                            <tr>
+                                <th style="width: 32px;">編號</th>
+                                <th>拍賣商品名稱</th>
+                                <th style="width: 58px;">起標底價</th>
+                                <th style="width: 60px;">建議市價</th>
+                                <th style="width: 80px;" class="bg-budget-col">★ 規劃預算</th>
+                                <th style="width: 70px;">得標組別</th>
+                                <th style="width: 80px;" class="bg-winner-col">最終成交價</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>01</strong></td>
+                                <td class="text-left">降噪 AirPods Pro 耳機</td>
+                                <td>$500</td>
+                                <td>$7,000</td>
+                                <td class="bg-budget-col"></td>
+                                <td></td>
+                                <td class="bg-winner-col"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>02</strong></td>
+                                <td class="text-left">網紅四季厚奶茶 100 杯</td>
+                                <td>$200</td>
+                                <td>$6,000</td>
+                                <td class="bg-budget-col"></td>
+                                <td></td>
+                                <td class="bg-winner-col"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>03</strong></td>
+                                <td class="text-left">人氣樂團演唱會特區門票</td>
+                                <td>$1,000</td>
+                                <td>$6,800</td>
+                                <td class="bg-budget-col"></td>
+                                <td></td>
+                                <td class="bg-winner-col"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>04</strong></td>
+                                <td class="text-left">GORE-TEX 機能外套</td>
+                                <td>$1,000</td>
+                                <td>$12,000</td>
+                                <td class="bg-budget-col"></td>
+                                <td></td>
+                                <td class="bg-winner-col"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>05</strong></td>
+                                <td class="text-left">捷安特公路碳纖維單車</td>
+                                <td>$1,000</td>
+                                <td>$15,000</td>
+                                <td class="bg-budget-col"></td>
+                                <td></td>
+                                <td class="bg-winner-col"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>06</strong></td>
+                                <td class="text-left">全球植樹與減碳計畫</td>
+                                <td>$200</td>
+                                <td>$1,000</td>
+                                <td class="bg-budget-col"></td>
+                                <td></td>
+                                <td class="bg-winner-col"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>07</strong></td>
+                                <td class="text-left">任天堂 Switch 2 豪華組</td>
+                                <td>$500</td>
+                                <td>$13,000</td>
+                                <td class="bg-budget-col"></td>
+                                <td></td>
+                                <td class="bg-winner-col"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>08</strong></td>
+                                <td class="text-left">健檢與重大傷病平安險</td>
+                                <td>$500</td>
+                                <td>$5,000</td>
+                                <td class="bg-budget-col"></td>
+                                <td></td>
+                                <td class="bg-winner-col"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>09</strong></td>
+                                <td class="text-left">精美特製家人生日禮包</td>
+                                <td>$300</td>
+                                <td>$2,000</td>
+                                <td class="bg-budget-col"></td>
+                                <td></td>
+                                <td class="bg-winner-col"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>10</strong></td>
+                                <td class="text-left">RTX 5080 頂級旗艦顯卡</td>
+                                <td>$2,000</td>
+                                <td>$36,000</td>
+                                <td class="bg-budget-col"></td>
+                                <td></td>
+                                <td class="bg-winner-col"></td>
+                            </tr>
+                            <tr style="background: #f1f5f9; font-weight: 800;">
+                                <td colspan="4">左欄小計 (01~10 項)</td>
+                                <td class="bg-budget-col">$</td>
+                                <td>--</td>
+                                <td class="bg-winner-col">$</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 右欄 11~20 -->
+                <div class="table-col-wide">
+                    <table class="table-wide">
+                        <thead>
+                            <tr>
+                                <th style="width: 32px;">編號</th>
+                                <th>拍賣商品名稱</th>
+                                <th style="width: 58px;">起標底價</th>
+                                <th style="width: 60px;">建議市價</th>
+                                <th style="width: 80px;" class="bg-budget-col">★ 規劃預算</th>
+                                <th style="width: 70px;">得標組別</th>
+                                <th style="width: 80px;" class="bg-winner-col">最終成交價</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>11</strong></td>
+                                <td class="text-left">東京奢華雙人自由行</td>
+                                <td>$3,000</td>
+                                <td>$40,000</td>
+                                <td class="bg-budget-col"></td>
+                                <td></td>
+                                <td class="bg-winner-col"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>12</strong></td>
+                                <td class="text-left">iPad Pro M4 + Pencil</td>
+                                <td>$2,000</td>
+                                <td>$35,000</td>
+                                <td class="bg-budget-col"></td>
+                                <td></td>
+                                <td class="bg-winner-col"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>13</strong></td>
+                                <td class="text-left">Tesla M3 自駕體驗券</td>
+                                <td>$500</td>
+                                <td>$5,000</td>
+                                <td class="bg-budget-col"></td>
+                                <td></td>
+                                <td class="bg-winner-col"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>14</strong></td>
+                                <td class="text-left">日常超柔抽取衛生紙</td>
+                                <td>$200</td>
+                                <td>$800</td>
+                                <td class="bg-budget-col"></td>
+                                <td></td>
+                                <td class="bg-winner-col"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>15</strong></td>
+                                <td class="text-left">生成式 AI 與程式課程</td>
+                                <td>$1,000</td>
+                                <td>$8,000</td>
+                                <td class="bg-budget-col"></td>
+                                <td></td>
+                                <td class="bg-winner-col"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>16</strong></td>
+                                <td class="text-left">智慧手環與心率手錶</td>
+                                <td>$500</td>
+                                <td>$8,000</td>
+                                <td class="bg-budget-col"></td>
+                                <td></td>
+                                <td class="bg-winner-col"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>17</strong></td>
+                                <td class="text-left">流浪動物之家飼料捐贈</td>
+                                <td>$200</td>
+                                <td>$2,000</td>
+                                <td class="bg-budget-col"></td>
+                                <td></td>
+                                <td class="bg-winner-col"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>18</strong></td>
+                                <td class="text-left">煙霧探測與滅火器組</td>
+                                <td>$300</td>
+                                <td>$2,500</td>
+                                <td class="bg-budget-col"></td>
+                                <td></td>
+                                <td class="bg-winner-col"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>19</strong></td>
+                                <td class="text-left">頂級和牛燒肉雙人套餐</td>
+                                <td>$500</td>
+                                <td>$5,000</td>
+                                <td class="bg-budget-col"></td>
+                                <td></td>
+                                <td class="bg-winner-col"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>20</strong></td>
+                                <td class="text-left">星巴克咖啡豆手沖壺組</td>
+                                <td>$300</td>
+                                <td>$3,000</td>
+                                <td class="bg-budget-col"></td>
+                                <td></td>
+                                <td class="bg-winner-col"></td>
+                            </tr>
+                            <tr style="background: #f1f5f9; font-weight: 800;">
+                                <td colspan="4">右欄小計 (11~20 項)</td>
+                                <td class="bg-budget-col">$</td>
+                                <td>--</td>
+                                <td class="bg-winner-col">$</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 底部統計結算欄 -->
+            <div class="budget-bottom-summary">
+                <div class="summary-metric-card">
+                    <span><i class="fa-solid fa-calculator text-gold"></i> ① 本組預計規劃總預算：</span>
+                    <strong>$<span class="underline" style="width:65px;"></span></strong>
+                </div>
+                <div class="summary-metric-card">
+                    <span><i class="fa-solid fa-gavel text-blue"></i> ② 本組拍賣實際得標總支出：</span>
+                    <strong>$<span class="underline" style="width:65px;"></span></strong>
+                </div>
+                <div class="summary-metric-card">
+                    <span><i class="fa-solid fa-wallet text-green"></i> ③ 剩餘可用現金 (20,000 - 儲蓄 - 支出)：</span>
+                    <strong style="color: #15803d;">$<span class="underline" style="width:65px;"></span></strong>
+                </div>
+            </div>
+
+            <footer class="sheet-footer">
+                <span>利餘金鰲買 理財素養教學活動 ｜ 快樂鯉魚秋老虎</span>
+                <span class="footer-notice">★ 競標時請時刻對照預算規劃，切勿因同儕競爭而盲目加價透支！</span>
+            </footer>
+        </section>
+
+        <!-- ========================================================
+             學習單 ③：【利餘金鰲買 — 戰利品思辨與生存挑戰單】
+             ======================================================== -->
+        <section class="a4-landscape-page" id="page-3">
+            <header class="sheet-header">
+                <div class="title-block">
+                    <h1 class="main-title">利餘金鰲買 — 戰利品思辨與生存挑戰單</h1>
+                </div>
+                <div class="header-right">
+                    <div class="info-bar">
+                        <div class="info-field">班級：<span class="underline"></span></div>
+                        <div class="info-field">組別：<span class="underline"></span></div>
+                        <div class="info-field">組員：<span class="underline underline-lg"></span></div>
+                        <div class="info-field">日期：<span class="underline"></span></div>
+                    </div>
+                    <div class="header-actions">
+                        <a href="index.html" class="btn-home-corner" title="返回主頁">
+                            <i class="fa-solid fa-house"></i> 回主頁
+                        </a>
+                        <button class="btn-print-corner" onclick="printPage(3)" title="列印此頁">
+                            <i class="fa-solid fa-print"></i> 列印
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <div class="stage3-container">
+                <!-- 區塊 1：戰利品需要 vs 想要思辨 (擴充至 10 項完整記錄) -->
+                <div class="stage3-block-classify">
+                    <div class="block-header">
+                        <div class="block-title">
+                            <i class="fa-solid fa-scale-balanced" style="color: #2563eb;"></i>
+                            <span>Part 1：小組得標戰利品「需要 (Need) vs. 想要 (Want)」思辨盤點 (共 10 項)</span>
+                        </div>
+                        <div class="block-tip">
+                            ※ 需要：生存或謀生必需品 ｜ 想要：個人享樂慾望開銷
+                        </div>
+                    </div>
+
+                    <!-- 10 列大格表格，書寫精緻整齊、容量充足 -->
+                    <table class="table-classify-wide">
+                        <thead>
+                            <tr>
+                                <th style="width: 32px;">序</th>
+                                <th style="width: 155px;">小組得標商品名稱</th>
+                                <th style="width: 115px;">性質判定</th>
+                                <th>小組分類理由與省思（為什麼判定為需要或想要？）</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>1</strong></td>
+                                <td class="text-left"></td>
+                                <td>□ 需要　□ 想要</td>
+                                <td class="text-left"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>2</strong></td>
+                                <td class="text-left"></td>
+                                <td>□ 需要　□ 想要</td>
+                                <td class="text-left"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>3</strong></td>
+                                <td class="text-left"></td>
+                                <td>□ 需要　□ 想要</td>
+                                <td class="text-left"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>4</strong></td>
+                                <td class="text-left"></td>
+                                <td>□ 需要　□ 想要</td>
+                                <td class="text-left"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>5</strong></td>
+                                <td class="text-left"></td>
+                                <td>□ 需要　□ 想要</td>
+                                <td class="text-left"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>6</strong></td>
+                                <td class="text-left"></td>
+                                <td>□ 需要　□ 想要</td>
+                                <td class="text-left"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>7</strong></td>
+                                <td class="text-left"></td>
+                                <td>□ 需要　□ 想要</td>
+                                <td class="text-left"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>8</strong></td>
+                                <td class="text-left"></td>
+                                <td>□ 需要　□ 想要</td>
+                                <td class="text-left"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>9</strong></td>
+                                <td class="text-left"></td>
+                                <td>□ 需要　□ 想要</td>
+                                <td class="text-left"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>10</strong></td>
+                                <td class="text-left"></td>
+                                <td>□ 需要　□ 想要</td>
+                                <td class="text-left"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- 獨立盲目競標檢討反思區 -->
+                    <div class="reflection-box">
+                        <div class="reflection-title">
+                            <i class="fa-solid fa-circle-question"></i>
+                            <span>盲目競標檢討：拍賣過程中有無超出預算加碼搶標？是否因同儕競爭而買下非必需品？原因是什麼？</span>
+                        </div>
+                        <div class="write-line"></div>
+                    </div>
+                </div>
+
+                <!-- 區塊 2：利餘之戰 6 大生活突發風險挑戰 (精緻雙欄對照表，緊緻高效率，打勾超清爽) -->
+                <div class="stage3-block-survival">
+                    <div class="block-header">
+                        <div class="block-title">
+                            <i class="fa-solid fa-shield-heart" style="color: #dc2626;"></i>
+                            <span>Part 2：利餘之戰 — 6 大生活突發風險挑戰記錄表</span>
+                        </div>
+                        <div class="block-tip">
+                            ※ 檢驗所標得的保障商品與儲蓄是否能抵禦未知危機
+                        </div>
+                    </div>
+
+                    <table class="survival-table-compact">
+                        <thead>
+                            <tr>
+                                <th style="width: 22%;">突發事件與衝擊</th>
+                                <th style="width: 14%;">對應防護裝備</th>
+                                <th style="width: 14%;">本組挑戰結果</th>
+                                <th style="width: 22%;">突發事件與衝擊</th>
+                                <th style="width: 14%;">對應防護裝備</th>
+                                <th style="width: 14%;">本組挑戰結果</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>① 流感住院一週</strong> <span class="tag-danger">(扣$5,000)</span></td>
+                                <td>#08 平安保險</td>
+                                <td>□ 免費防護　□ 扣$5,000</td>
+                                <td><strong>④ AI能力檢定</strong> <span class="tag-bonus">(獲獎$8,000)</span></td>
+                                <td>#15 AI實戰課程</td>
+                                <td>□ 獲獎$8,000　□ 未通過</td>
+                            </tr>
+                            <tr>
+                                <td><strong>② 廚房意外起火</strong> <span class="tag-danger">(扣$5,000)</span></td>
+                                <td>#18 滅火器組</td>
+                                <td>□ 免費防護　□ 扣$5,000</td>
+                                <td><strong>⑤ 統一發票開獎</strong> <span class="tag-bonus">(公益好運)</span></td>
+                                <td>#06綠碳 / #17浪浪</td>
+                                <td>□ 中頭獎$5,000　□ 普獎$200</td>
+                            </tr>
+                            <tr>
+                                <td><strong>③ 霸王寒流特報</strong> <span class="tag-danger">(扣$2,000)</span></td>
+                                <td>#04 防寒外套</td>
+                                <td>□ 免費防護　□ 扣$2,000</td>
+                                <td><strong>⑥ 手機摔碎意外</strong> <span class="tag-danger">(扣$3,500)</span></td>
+                                <td>考驗緊急預備金</td>
+                                <td>□ 由預備金扣除 $3,500</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 區塊 3：最終財務體質總診斷 (大氣橫向條卡) -->
+                <div class="stage3-block-diagnose">
+                    <div class="diagnose-row-1">
+                        <div class="diagnose-formula-text">
+                            <i class="fa-solid fa-chart-pie"></i> <strong>【最終資產結算】</strong>
+                            拍賣剩餘現金 ($<span class="fill-sm" style="width:36px;"></span>) ＋ 預存儲蓄 ($<span class="fill-sm" style="width:36px;"></span>) ＋ 挑戰損益 ($<span class="fill-sm" style="width:36px;"></span>) ＝
+                        </div>
+                        <div class="diagnose-total-badge">
+                            最終總資產: NT$ <span class="underline" style="width:60px; border-color:#fff;"></span>
+                        </div>
+                    </div>
+                    <div class="diagnose-row-2">
+                        <span>小組財務體質評估： □ 財務富足穩定 (&gt; $15,000) 　　□ 平穩安全過關 ($5,000 ~ $15,000) 　　□ 財務吃緊 / 破產危機 (&lt; $5,000)</span>
+                    </div>
+                    <div class="diagnose-row-3">
+                        <span style="white-space: nowrap;"><i class="fa-solid fa-lightbulb" style="color: #f59e0b;"></i> 本次活動我學到最重要的理財觀念：</span>
+                        <span class="underline-fill"></span>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="sheet-footer">
+                <span>利餘金鰲買 理財素養教學活動 ｜ 快樂鯉魚秋老虎</span>
+                <span class="footer-notice">★ 理財三大支柱：堅守預算紀律、先存再花、善用保障商品轉移未知風險！</span>
+            </footer>
+        </section>
+
+    </main>
+
+    <!-- 列印控制腳本 -->
+    <script>
+        function printPage(pageNumber) {
+            document.body.className = `print-p${pageNumber}`;
+            window.print();
+            setTimeout(() => {
+                document.body.className = '';
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

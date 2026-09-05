@@ -11,7 +11,7 @@ const ITEMS = [
         basePrice: 500,
         suggestPrice: 7000,
         isNeed: null, 
-        desc: "主動降噪藍牙耳機。在生存挑戰中能隔絕喧囂專心學習，免除因干擾導致的 $1,500 學習效率損失。"
+        desc: "極致主動降噪，享受純淨音質與無干擾世界"
     },
     {
         id: 2,
@@ -20,7 +20,7 @@ const ITEMS = [
         basePrice: 200,
         suggestPrice: 6000,
         isNeed: null,
-        desc: "一整年手搖飲快樂源泉！但含糖量極高，在生存挑戰中可能引發胃痛就醫而損失 NT$ 1,500。"
+        desc: "每日一杯療癒靈魂，享受爆棚的甜蜜幸福感"
     },
     {
         id: 3,
@@ -29,7 +29,7 @@ const ITEMS = [
         basePrice: 1000,
         suggestPrice: 6800,
         isNeed: null,
-        desc: "樂團巡迴演唱會搖滾區門票。極佳的情感共鳴與現場震撼，但也是昂貴的休閒與享樂開銷。"
+        desc: "搖滾第一排震撼視聽，此生必去的燃魂狂歡夜"
     },
     {
         id: 4,
@@ -38,7 +38,7 @@ const ITEMS = [
         basePrice: 1000,
         suggestPrice: 12000,
         isNeed: null,
-        desc: "防風防水的高科技保暖機能外套。在超級寒流侵襲時，能完全免除你受凍就醫的 NT$ 2,000 損失。"
+        desc: "頂級機能面料，全天候防風防水、保暖透氣"
     },
     {
         id: 5,
@@ -47,7 +47,7 @@ const ITEMS = [
         basePrice: 1000,
         suggestPrice: 15000,
         isNeed: null,
-        desc: "極速通勤與戶外運動神器。在生存挑戰中能鍛鍊體力，降低突發意外的就醫機率。"
+        desc: "極速破風、輕量操控，享受公路的奔馳快感"
     },
     {
         id: 6,
@@ -56,7 +56,7 @@ const ITEMS = [
         basePrice: 200,
         suggestPrice: 1000,
         isNeed: null,
-        desc: "支持聯合國減碳植樹計畫。累積對地球的善意與社會責任，能在好運發票開獎時大幅提高中獎機率。"
+        desc: "為地球種下綠意生機，攜手守護綠色未來"
     },
     {
         id: 7,
@@ -65,7 +65,7 @@ const ITEMS = [
         basePrice: 500,
         suggestPrice: 13000,
         isNeed: null,
-        desc: "最新款熱門遊戲主機與大作合輯。提供豐富的娛樂消遣，但也是容易讓人玩物喪志的娛樂性開支。"
+        desc: "次世代熱門旗艦主機，派對聚會的歡樂焦點"
     },
     {
         id: 8,
@@ -74,7 +74,7 @@ const ITEMS = [
         basePrice: 500,
         suggestPrice: 5000,
         isNeed: null,
-        desc: "理財中的風險轉移。當生存挑戰中遇到意外住院或流感時，保險公司將 100% 理賠醫療費 NT$ 5,000。"
+        desc: "全方位健康安全保障，打造最堅實的安心後盾"
     },
     {
         id: 9,
@@ -83,7 +83,7 @@ const ITEMS = [
         basePrice: 300,
         suggestPrice: 2000,
         isNeed: null,
-        desc: "送給家人的驚喜禮物與卡片。能有效加深家人間的情感連結，但也需在自己預算內量力而行。"
+        desc: "滿載溫暖心意的客製驚喜，獻上最珍貴的感動"
     },
     {
         id: 10,
@@ -92,7 +92,7 @@ const ITEMS = [
         basePrice: 2000,
         suggestPrice: 36000,
         isNeed: null,
-        desc: "極限遊戲玩家的夢幻神物！高昂價格（高於初始總預算），考驗你是否會因為衝動而在競標中透支。"
+        desc: "怪獸級頂級光追效能，征服所有 3A 遊戲大作"
     },
     {
         id: 11,
@@ -101,7 +101,7 @@ const ITEMS = [
         basePrice: 3000,
         suggestPrice: 40000,
         isNeed: null,
-        desc: "充滿異國風情的精采旅遊。能放鬆心靈與擴展眼界，但價格極高，在預算規劃上必須謹慎評估。"
+        desc: "漫步繁華澀谷與富士山景，享受極致放鬆假期"
     },
     {
         id: 12,
@@ -110,7 +110,7 @@ const ITEMS = [
         basePrice: 2000,
         suggestPrice: 35000,
         isNeed: null,
-        desc: "頂級生產力與數位繪圖平板。如果作為謀生工具是需要，如果是看影片則是想要，考驗你的自我主張。"
+        desc: "超強 M4 晶片，學習筆記與數位繪圖創作神器"
     },
     {
         id: 13,
@@ -119,7 +119,7 @@ const ITEMS = [
         basePrice: 500,
         suggestPrice: 5000,
         isNeed: null,
-        desc: "體驗特斯拉純電自駕的科技魅力。一整天的拉風暢遊，但屬於純粹的科技享受型消費。"
+        desc: "感受貼背加速與頂尖科技，體驗未來智慧駕馭"
     },
     {
         id: 14,
@@ -128,7 +128,7 @@ const ITEMS = [
         basePrice: 200,
         suggestPrice: 800,
         isNeed: null,
-        desc: "居家生活的衛生基本消耗品。保持清潔健康不可或缺，在理財中屬於必不可少的生存支出。"
+        desc: "頂級親膚絲柔觸感，每日居家生活必備首選"
     },
     {
         id: 15,
@@ -137,7 +137,7 @@ const ITEMS = [
         basePrice: 1000,
         suggestPrice: 8000,
         isNeed: null,
-        desc: "投資自我能力的增值開支。在生存挑戰中能提高你的學術表現，從而穩獲學校特優獎學金 NT$ 8,000 元。"
+        desc: "掌握前沿 AI 實戰技術，全面升級未來競爭力"
     },
     {
         id: 16,
@@ -146,7 +146,7 @@ const ITEMS = [
         basePrice: 500,
         suggestPrice: 8000,
         isNeed: null,
-        desc: "追蹤心率與睡眠的科技手環。能提醒你保持規律作息與運動，但非生存之絕對必需品。"
+        desc: "24小時健康與活力管理，時尚運動隨身教練"
     },
     {
         id: 17,
@@ -155,7 +155,7 @@ const ITEMS = [
         basePrice: 200,
         suggestPrice: 2000,
         isNeed: null,
-        desc: "為無家可歸的浪浪們提供溫飽。累積愛心與社會關懷，能在好運發票開獎時為你帶來幸運加成。"
+        desc: "為毛孩送上一份溫飽與愛，用善意溫暖世界"
     },
     {
         id: 18,
@@ -164,7 +164,7 @@ const ITEMS = [
         basePrice: 300,
         suggestPrice: 2500,
         isNeed: null,
-        desc: "居家安全的必備裝備。當在生存挑戰中不幸遇到廚房起火時，能免除 you 高達 NT$ 5,000 的家當燒毀損失。"
+        desc: "高敏度預警與高效滅火，滴水不漏守護居家安全"
     },
     {
         id: 19,
@@ -173,7 +173,7 @@ const ITEMS = [
         basePrice: 500,
         suggestPrice: 5000,
         isNeed: null,
-        desc: "奢華的和牛盛宴，滿足味蕾極限。適合與重要的人慶祝，但屬於高昂的享樂與餐飲開銷。"
+        desc: "頂級霜降和牛入口即化，尊榮非凡的舌尖饗宴"
     },
     {
         id: 20,
@@ -182,7 +182,7 @@ const ITEMS = [
         basePrice: 300,
         suggestPrice: 3000,
         isNeed: null,
-        desc: "享受精緻手沖咖啡的生活儀式感。能提升生活品質與提神，但若資金吃緊，則可被即溶咖啡代替。"
+        desc: "職人級手沖咖啡美學，品味香醇濃郁的優雅時光"
     }
 ];
 
@@ -530,6 +530,7 @@ function initBudgetScreen() {
                 <div class="goods-vector-box">${item.svg}</div>
                 <div class="goods-info">
                     <span class="goods-name">${item.name}</span>
+                    <div class="goods-ad-desc">${item.desc}</div>
                     <span class="goods-suggest">底價: $${item.basePrice} | 建議預算: $${item.suggestPrice}</span>
                 </div>
             </div>
